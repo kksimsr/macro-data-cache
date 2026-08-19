@@ -1,0 +1,66 @@
+name: refresh
+
+on:
+  schedule:
+    # 02:30 UTC daily = 08:00 IST, after the previous US session has settled
+    # and before the Indian market day gets going.
+    - cron: '30 2 * * *'
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'Run a single source (fred, rbi_forward_book, rbi_wss, rbihub, nsdl_fpi, india_misc)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Parser smoke tests
+        run: python selftest.py
+
+      - name: Fetch
+        id: fetch
+        continue-on-error: true          # commit partial results even on failure
+        run: |
+          if [ -n "${{ github.event.inputs.only }}" ]; then
+            python run.py --only "${{ github.event.inputs.only }}"
+          else
+            python run.py
+          fi
+
+      - name: Commit
+        run: |
+          git config user.name  "macro-data-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "no changes"
+          else
+            git commit -m "refresh $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push
+          fi
+
+      - name: Surface data-quality failures
+        if: steps.fetch.outcome == 'failure'
+        run: |
+          echo "::error::Fetch reported data-quality errors. See MANIFEST.md."
+          sed -n '1,60p' MANIFEST.md || true
+          exit 1
