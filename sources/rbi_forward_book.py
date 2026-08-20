@@ -40,7 +40,7 @@ we asked for.
 from __future__ import annotations
 
 import re
-from datetime import date
+from datetime import date, timedelta
 
 from bs4 import BeautifulSoup
 
@@ -142,32 +142,53 @@ def _extract(html: bytes) -> tuple[dict, list[list[str]]]:
     return got, rows
 
 
-def _probe(ym: tuple[int, int]):
-    """Fetch and validate the IRFCL page for reference month y-m."""
+# Probe outcomes. Distinguishing these matters: counting a network failure as
+# "this month does not exist" let three flaky runs permanently abandon ~90 months
+# of a 25-year series, with no repair path.
+FOUND, NO_RELEASE, UNREACHABLE, TOO_EARLY = "found", "no_release", "unreachable", "early"
+
+
+def _probe(ym: tuple[int, int], deadline: Deadline | None = None):
+    """Fetch and validate the IRFCL page for reference month y-m.
+
+    The deadline is checked before EVERY candidate date, not once before the
+    loop. pmap submits all futures up front and cannot cancel them, so a check
+    outside the worker does nothing: nine candidates x 36 months was measured at
+    721s against a 360s budget — the original timeout bug, relocated."""
     y, m = ym
     ref = f"{y:04d}-{m:02d}"
     rel_month_end = month_end(y + (m // 12), (m % 12) + 1)
     today = date.today()
-    for cand in last_working_days(rel_month_end, n=5):
-        if cand > today:
-            continue                    # release has not happened yet
+    # Window extends a few days into M+2: a release delayed past month-end by a
+    # holiday cluster would otherwise never be found.
+    cands = [c for c in last_working_days(rel_month_end + timedelta(days=4), n=9)
+             if c <= today]
+    if not cands:
+        return ref, TOO_EARLY, None, None, None
+    reached = False
+    for cand in cands:
+        if deadline and deadline.expired:
+            return ref, UNREACHABLE, None, None, None
         try:
             page = get(URL.format(cand.strftime("%d%m%Y")), tries=1,
                        timeout=PROBE_TIMEOUT)
         except FetchError:
-            continue
+            continue                    # transport problem, try the next date
+        reached = True
         got, _ = _extract(page)
         if got["ref_month"] == ref:     # the only trustworthy check
-            return ref, cand, page, got
-    return ref, None, None, None
+            return ref, FOUND, cand, page, got
+    return ref, (NO_RELEASE if reached else UNREACHABLE), None, None, None
 
 
 def run(dq: DQ, deadline: Deadline | None = None) -> dict:
     rows_on_file = {r["ref_month"]: r for r in read_existing("rbi/forward_book.csv")}
-    # Drop rows written by the broken parser so they get refetched cleanly.
-    rows_on_file = {k: v for k, v in rows_on_file.items() if v.get("short_total")}
-    misses = {r["ref_month"]: int(r.get("attempts", 0))
-              for r in read_existing("rbi/_irfcl_misses.csv")}
+    # Months whose short leg never parsed are RETRIED but not deleted: dropping
+    # them meant a subsequent failed probe silently removed an already-published
+    # month (and its reserve-assets value) from the CSV entirely.
+    needs_reparse = {k for k, v in rows_on_file.items() if not v.get("short_total")}
+    misses = {r["ref_month"]: _int(r.get("attempts"))
+              for r in read_existing("rbi/_irfcl_misses.csv") if r.get("ref_month")}
 
     today = date.today()
     targets = list(month_iter(START, month_end(today.year, today.month)))
@@ -175,7 +196,9 @@ def run(dq: DQ, deadline: Deadline | None = None) -> dict:
 
     def wanted(y, m):
         ref = f"{y:04d}-{m:02d}"
-        if ref in rows_on_file and ref not in recent:
+        if (ref in rows_on_file and ref not in recent
+                and not (ref in needs_reparse
+                         and misses.get(ref, 0) < MAX_PROBE_ATTEMPTS)):
             return False
         if misses.get(ref, 0) >= MAX_PROBE_ATTEMPTS and ref not in recent:
             return False
@@ -190,25 +213,50 @@ def run(dq: DQ, deadline: Deadline | None = None) -> dict:
         todo = []
 
     fetched = missed = 0
-    for res in pmap(_probe, todo, workers=5):
+    unreachable = 0
+
+    def _worker(ym):
+        return _probe(ym, deadline)
+
+    for res in pmap(_worker, todo, workers=5):
         if isinstance(res, Exception):
             missed += 1
             continue
-        ref, used, page, got = res
-        if page is None:
-            misses[ref] = misses.get(ref, 0) + 1
+        ref, status, used, page, got = res
+        if status != FOUND:
             missed += 1
+            if status == NO_RELEASE:
+                # Only a page we actually reached counts against the retry cap.
+                misses[ref] = misses.get(ref, 0) + 1
+            elif status == UNREACHABLE:
+                unreachable += 1
             continue
-        misses.pop(ref, None)
         archive_raw(f"rbi/irfcl/IMF_{ref}.html", page)
 
         s, l = got["short"], got["long"]
         st, lt = s.get("total"), l.get("total")
         if st is None:
             dq.warn(NAME, f"{ref}: short-position total not found (raw archived)")
+        elif st > 0:
+            # Shorts are published negative. A positive one means either a sign
+            # convention change or a parse landing on the wrong cell; either way
+            # the net calculation below would be inverted.
+            dq.error(NAME, f"{ref}: short position published positive ({st:,.0f}) "
+                           f"— sign convention broken, refusing to net it")
+            st = None
+        if st is not None and lt is None:
+            dq.warn(NAME, f"{ref}: long leg not parsed; net omitted rather than "
+                          f"assuming zero")
         # Shorts are published negative, longs positive. Net short positive =
         # RBI owes dollars forward (capacity consumed); negative = net long.
-        net = None if st is None else (-st) - (lt or 0.0)
+        net = None if (st is None or lt is None) else (-st) - lt
+        if st is None:
+            # Reached the page but could not read it. Count it, so a month whose
+            # layout we cannot handle stops consuming a backfill slot on every
+            # run for ever (and stops re-raising the same error indefinitely).
+            misses[ref] = misses.get(ref, 0) + 1
+        else:
+            misses.pop(ref, None)
         rows_on_file[ref] = {
             "ref_month": ref,
             "release_date": used.isoformat(),
@@ -231,10 +279,20 @@ def run(dq: DQ, deadline: Deadline | None = None) -> dict:
               ["ref_month", "release_date", "short_total", "short_0_1m",
                "short_1_3m", "short_3_12m", "long_total", "net_short_usd_mn",
                "official_reserve_assets_usd_mn"])
-    if misses:
-        write_csv("rbi/_irfcl_misses.csv",
-                  [{"ref_month": k, "attempts": v} for k, v in sorted(misses.items())],
-                  ["ref_month", "attempts"])
+    # Written unconditionally: guarding on truthiness left stale rows on disk
+    # after the last miss was resolved, so a resurrected month got fewer retries.
+    write_csv("rbi/_irfcl_misses.csv",
+              [{"ref_month": k, "attempts": v}
+               for k, v in sorted(misses.items()) if k]
+              or [{"ref_month": "none", "attempts": "0"}], ["ref_month", "attempts"])
+    if unreachable:
+        dq.warn(NAME, f"{unreachable} months unreachable this run (transport, not "
+                      f"missing) — not counted against the retry cap")
+    abandoned = sorted(k for k, v in misses.items() if v >= MAX_PROBE_ATTEMPTS)
+    if abandoned:
+        dq.warn(NAME, f"{len(abandoned)} months given up on after "
+                      f"{MAX_PROBE_ATTEMPTS} confirmed-absent probes: "
+                      f"{', '.join(abandoned[:8])}{'...' if len(abandoned) > 8 else ''}")
 
     parsed = sum(1 for r in ordered if r["net_short_usd_mn"])
     _sanity(dq, ordered)
@@ -249,22 +307,40 @@ def _f(v) -> str:
     return "" if v is None else f"{v:.2f}"
 
 
+def _int(v, default: int = 0) -> int:
+    """Stored CSV values are strings and may be hand-edited or half-written."""
+    try:
+        return int(str(v).strip())
+    except (TypeError, ValueError):
+        return default
+
+
 def _sanity(dq: DQ, ordered: list[dict]) -> None:
-    """Cross-check the parse. The buckets must sum to the total, and the recent
-    book is known to run in the tens of billions — a total in the low thousands
-    means we are reading the wrong cell again."""
-    for r in ordered[-24:]:
+    """Per-ROW checks. The previous version tested `max(net) < 5000` across the
+    last six months, which a single wrong month sailed through — precisely the
+    shape of the bug that shipped (-1,366 against a true -50,586). Each month is
+    now judged against the maturity buckets and against its own neighbour."""
+    prev_ref, prev_net = None, None
+    for r in ordered[-36:]:
+        ref = r["ref_month"]
         tot = num(r["short_total"])
-        if tot is None:
+        if tot is not None:
+            parts = [num(r[k]) for k in ("short_0_1m", "short_1_3m", "short_3_12m")]
+            if all(p is not None for p in parts):
+                bsum = sum(parts)
+                if abs(bsum - tot) > max(1.0, abs(tot) * 0.005):
+                    dq.error(NAME, f"{ref}: maturity buckets sum to {bsum:,.0f} but "
+                                   f"total is {tot:,.0f} — parser misaligned")
+        net = num(r["net_short_usd_mn"])
+        if net is None:
+            prev_ref, prev_net = ref, None
             continue
-        parts = [num(r[k]) for k in ("short_0_1m", "short_1_3m", "short_3_12m")]
-        if all(p is not None for p in parts):
-            s = sum(parts)
-            if abs(s - tot) > max(1.0, abs(tot) * 0.005):
-                dq.error(NAME, f"{r['ref_month']}: maturity buckets sum to {s:.0f} "
-                               f"but total is {tot:.0f} — parser is misaligned")
-    recent = [num(r["net_short_usd_mn"]) for r in ordered[-6:]
-              if num(r["net_short_usd_mn"]) is not None]
-    if recent and max(recent) < 5000:
-        dq.error(NAME, f"recent net short book peaks at only {max(recent):.0f} USD mn; "
-                       f"published figures are tens of billions — suspect wrong cell")
+        if prev_net is not None and abs(prev_net) > 5000:
+            # Month-on-month the book moves by billions, not orders of magnitude.
+            if abs(net) < abs(prev_net) * 0.25:
+                dq.error(NAME, f"{ref}: net short {net:,.0f} is a >75% collapse from "
+                               f"{prev_ref} ({prev_net:,.0f}) — suspect wrong cell")
+            elif (net > 0) != (prev_net > 0) and abs(net) > 5000:
+                dq.error(NAME, f"{ref}: net position flipped sign vs {prev_ref} "
+                               f"({prev_net:,.0f} -> {net:,.0f}) — verify, do not assume")
+        prev_ref, prev_net = ref, net

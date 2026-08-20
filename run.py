@@ -9,7 +9,7 @@ is visible in the Actions tab rather than discovered months later in a backtest.
 
 Usage:
     python run.py                 # everything
-    python run.py --only fred     # one source
+    python run.py --only market   # one source
     python run.py --skip nse_iv   # all but one
     python run.py --list          # show source names
 """
@@ -22,7 +22,8 @@ import traceback
 from datetime import datetime, timezone
 from pathlib import Path
 
-from sources import fred, india_misc, nsdl_fpi, rbi_forward_book, rbi_wss, rbihub
+from sources import (india_misc, market, nsdl_fpi, rbi_forward_book, rbi_wss,
+                     rbihub)
 from sources.common import DQ, LOGS, ROOT, Deadline
 
 # name -> (module, description, time budget in seconds)
@@ -32,16 +33,22 @@ from sources.common import DQ, LOGS, ROOT, Deadline
 # have; capped backfill then completes over consecutive daily runs. The global
 # budget is deliberately below the workflow step timeout so the commit step
 # always gets to run.
+# india_misc runs FIRST: the NSE implied-vol capture is the only irreplaceable
+# item here (no historical source exists, so a missed day is a permanent hole).
+# It must not be the one starved when the clock runs down.
+# Budgets sum to <= GLOBAL_BUDGET_S; previously they summed to 1800 against a
+# 1500 cap, so the ordering silently decided who got squeezed.
 SOURCES = {
-    "fred": (fred, "FRED — global/US, EM crosses, DXY constituents", 300),
-    "rbi_forward_book": (rbi_forward_book, "RBI IRFCL — net forward book", 420),
-    "rbi_wss": (rbi_wss, "RBI WSS — weekly FX reserves", 360),
-    "rbihub": (rbihub, "DBIE mirror — REER, forward premia, intervention, ECB", 180),
-    "nsdl_fpi": (nsdl_fpi, "NSDL — monthly FPI flows", 300),
-    "india_misc": (india_misc, "WPI, gold, NSE USD/INR option IV", 180),
+    "india_misc": (india_misc, "WPI + NSE USD/INR option IV (append-only)", 150),
+    "market": (market, "GitHub mirrors + FRED — FX, oil, VIX, US rates", 330),
+    "rbi_forward_book": (rbi_forward_book, "RBI IRFCL — net forward book", 360),
+    "rbi_wss": (rbi_wss, "RBI WSS — weekly FX reserves", 330),
+    "rbihub": (rbihub, "DBIE mirror — REER, forward premia, intervention, ECB", 150),
+    "nsdl_fpi": (nsdl_fpi, "NSDL — monthly FPI flows", 180),
 }
 
 GLOBAL_BUDGET_S = 1500   # 25 min; workflow step timeout is 30 min
+assert sum(b for _m, _d, b in SOURCES.values()) <= GLOBAL_BUDGET_S
 
 
 def main() -> int:
@@ -85,18 +92,14 @@ def main() -> int:
             dq.error(name, f"source failed: {type(e).__name__}: {e}")
             traceback.print_exc()
         results[name]["seconds"] = round(overall.elapsed - t0, 1)
+        # Persist after EVERY source. Writing the manifest only at the end meant a
+        # step timeout committed fresh CSVs alongside the previous run's manifest,
+        # which then described a dataset that no longer existed.
+        _persist(started, results, dq)
 
-    finished = datetime.now(timezone.utc)
-    manifest = {
-        "run_started_utc": started.isoformat(timespec="seconds"),
-        "run_finished_utc": finished.isoformat(timespec="seconds"),
-        "duration_s": round((finished - started).total_seconds(), 1),
-        "sources": results,
-        "dq": {"errors": dq.n_errors, "warnings": dq.n_warns, "entries": dq.entries},
-    }
-    LOGS.mkdir(exist_ok=True)
-    (LOGS / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    _write_markdown(manifest)
+    # One writer for the manifest: _persist merges with what is already on disk,
+    # so a --only run records that source without erasing the other five.
+    _persist(started, results, dq)
 
     ok = sum(1 for r in results.values() if r["status"] == "ok")
     print(f"\n{'='*66}\n{ok}/{len(results)} sources ok · "
@@ -106,6 +109,29 @@ def main() -> int:
               "is still committed.")
         return 1
     return 0
+
+
+def _persist(started, results: dict, dq: DQ) -> None:
+    now = datetime.now(timezone.utc)
+    # Merge into any existing manifest so a --only run does not erase the record
+    # of every other source.
+    prior = {}
+    f = LOGS / "manifest.json"
+    if f.exists():
+        try:
+            prior = (json.loads(f.read_text()) or {}).get("sources", {})
+        except (json.JSONDecodeError, OSError):
+            prior = {}
+    merged = {**prior, **results}
+    m = {
+        "run_started_utc": started.isoformat(timespec="seconds"),
+        "run_finished_utc": now.isoformat(timespec="seconds"),
+        "duration_s": round((now - started).total_seconds(), 1),
+        "sources": merged,
+        "dq": {"errors": dq.n_errors, "warnings": dq.n_warns, "entries": dq.entries},
+    }
+    _atomic_write(f, json.dumps(m, indent=2))
+    _write_markdown(m)
 
 
 def _write_markdown(m: dict) -> None:
@@ -135,12 +161,25 @@ def _write_markdown(m: dict) -> None:
         L += ["", "## Errors", ""] + [f"- **{e['source']}** — {e['msg']}" for e in errs]
     if warns:
         L += ["", "## Warnings", ""] + [f"- *{e['source']}* — {e['msg']}" for e in warns]
-    if "series" in m["sources"].get("fred", {}):
-        L += ["", "## FRED coverage", "", "| id | label | n | first | last |",
+    mk = m["sources"].get("market", {})
+    if mk.get("gaps"):
+        L += ["", "## Coverage gaps", "",
+              "FRED-only series unavailable this run (no mirror exists); retried next run:",
+              "", ", ".join(f"`{g}`" for g in mk["gaps"])]
+    if "series" in mk:
+        L += ["", "## Market coverage", "", "| id | label | n | first | last |",
               "|---|---|---|---|---|"]
-        for sid, s in m["sources"]["fred"]["series"].items():
+        for sid, s in mk["series"].items():
             L.append(f"| `{sid}` | {s['label']} | {s['n']} | {s['first']} | {s['last']} |")
-    (Path(ROOT) / "MANIFEST.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    _atomic_write(Path(ROOT) / "MANIFEST.md", "\n".join(L) + "\n")
+
+
+def _atomic_write(path: Path, text: str) -> None:
+    """The fetch step can be killed at any instant and the workflow commits
+    whatever is on disk, so a half-written manifest must never land."""
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(text, encoding="utf-8")
+    tmp.replace(path)
 
 
 if __name__ == "__main__":

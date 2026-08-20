@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 *.tmp
 .venv/
+# Files retired by an update. The desktop bridge that delivers updates cannot
+# delete, only move, so removals land here; safe to delete by hand.
+_to_delete/

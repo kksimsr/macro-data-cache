@@ -19,7 +19,8 @@ import sys
 
 from sources.common import DQ, num
 from sources.rbi_forward_book import _extract
-from sources.rbi_wss import DATE_ONLY_RE, ID_RE, _parse_date, _reserves_from_html
+from sources.rbi_wss import (DATE_ONLY_RE, ID_RE, _parse_date,
+                             _reserves_from_html, _validate)
 
 FAILS: list[str] = []
 
@@ -44,6 +45,15 @@ def test_num():
     check("nbsp", num("\xa0686,347.53\xa0"), 686347.53)
     check("footnote star", num("*"), None)
     check("plain negative", num("-50,586.00"), -50586.0)
+    # Sign-flip class: RBI pages use these dashes for negatives. Stripping them
+    # turned -1,366 into +1,366 and inverted the headline forward-book signal.
+    check("unicode minus U+2212", num("\u22121366"), -1366.0)
+    check("en dash negative", num("\u20131,366"), -1366.0)
+    # Fusion class: get_text() flattens footnote superscripts into the cell.
+    check("value + footnote rejected", num("50,586.00 1"), None)
+    check("two numbers rejected", num("1,234 5,678"), None)
+    check("date rejected", num("2026-08-14"), None)
+    check("range rejected", num("1-2"), None)
 
 
 # Real IRFCL layout, reduced from an archived page. The label row carries NO
@@ -135,22 +145,50 @@ def test_wss_index():
     check("older id", links.get("2026-08-07"), "28624")
 
 
+# The REAL WSS layout, reduced from the release published 14 Aug 2026. Eight
+# numeric columns, only the second of which is the USD level. The previous
+# parser took nums[len//2] — the end-March variation in rupee crore — and stored
+# 15,894 as if it were $707bn of reserves. Note also that this release reports
+# reserves AS ON 07 Aug: dating rows by publication shifts the series a week.
 WSS = b"""<html><body><table>
-<tr><th>Item</th><th>Rs Crore</th><th>US$ Mn</th></tr>
-<tr><td>Total Reserves</td><td>5,900,000</td><td>686,347</td></tr>
-<tr><td>(a) Foreign Currency Assets</td><td>4,800,000</td><td>566,002</td></tr>
-<tr><td>(b) Gold</td><td>900,000</td><td>102,500</td></tr>
-<tr><td>(c) SDRs</td><td>160,000</td><td>18,600</td></tr>
-<tr><td>(d) Reserve Position in the IMF</td><td>40,000</td><td>4,600</td></tr>
+<tr><td>Date : Aug 14, 2026</td></tr>
+<tr><td>Foreign Exchange Reserves</td></tr>
+<tr><td>Item</td><td>As on Aug. 07, 2026</td><td>Variation over</td></tr>
+<tr><td>Week</td><td>End-March 2026</td><td>Year</td></tr>
+<tr><td>&#8377; Cr.</td><td>US$ Mn.</td><td>&#8377; Cr.</td><td>US$ Mn.</td>
+    <td>&#8377; Cr.</td><td>US$ Mn.</td><td>&#8377; Cr.</td><td>US$ Mn.</td></tr>
+<tr><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+<tr><td>1 Total Reserves</td><td>6732093</td><td>707002</td><td>119945</td>
+    <td>14136</td><td>178232</td><td>15894</td><td>650963</td><td>13384</td></tr>
+<tr><td>1.1 Foreign Currency Assets #</td><td>5471605</td><td>574625</td><td>82740</td>
+    <td>9946</td><td>234238</td><td>22343</td><td>351690</td><td>-9353</td></tr>
+<tr><td>1.2 Gold</td><td>1035407</td><td>108738</td><td>35821</td><td>3995</td>
+    <td>-58903</td><td>-6657</td><td>280016</td><td>22578</td></tr>
+<tr><td>1.3 SDRs</td><td>178487</td><td>18745</td><td>356</td><td>79</td>
+    <td>1898</td><td>123</td><td>14183</td><td>4</td></tr>
+<tr><td>1.4 Reserve Position in the IMF</td><td>46595</td><td>4894</td><td>1028</td>
+    <td>116</td><td>999</td><td>86</td><td>5074</td><td>155</td></tr>
 </table></body></html>"""
 
 
 def test_wss():
-    print("WSS reserves extraction")
+    print("WSS reserves extraction (real 8-column layout)")
     v = _reserves_from_html(WSS)
-    check("total present", "total_reserves" in v, True)
-    check("fca present", "fca" in v, True)
-    check("gold present", "gold" in v, True)
+    check("total reserves = USD level, not a variation", v.get("total_reserves"), 707002.0)
+    check("foreign currency assets", v.get("fca"), 574625.0)
+    check("gold", v.get("gold"), 108738.0)
+    check("SDRs", v.get("sdr"), 18745.0)
+    check("IMF position", v.get("imf_position"), 4894.0)
+    check("rupee-crore level kept too", v.get("total_inr_cr"), 6732093.0)
+    check("dated AS ON, not by publication", v.get("as_on"), "2026-08-07")
+    dq = DQ()
+    check("components reconcile to total", _validate(dq, "t", v), True)
+    check("reconciliation raised nothing", dq.n_errors, 0)
+    print("WSS reconciliation catches a wrong column")
+    bad = dict(v, total_reserves=15894.0)
+    dq2 = DQ()
+    check("wrong column is rejected", _validate(dq2, "t", bad), False)
+    check("and it is an error", dq2.n_errors, 1)
     print("WSS date parsing")
     check("long month", _parse_date("Weekly Statistical Supplement 14 August, 2026"),
           "2026-08-14")

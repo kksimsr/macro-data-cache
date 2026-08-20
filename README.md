@@ -15,10 +15,11 @@ can then read over `raw.githubusercontent.com`.
 
 ```
 data/          normalised CSVs — the output you actually consume
-  fred/        one file per FRED series id (date,value)
+  market/      FX crosses, oil, VIX, gold, US CPI (date,value[,quote])
+  fred/        FRED-only series, one file per id (date,value)
   rbi/         forward book, weekly reserves, REER/NEER, forward premia, ECB
   india/       FPI flows, USD/INR option implied-vol log
-  global/      gold
+
 raw/           gzipped, unparsed source payloads, exactly as fetched
 logs/          manifest.json — machine-readable run report
 MANIFEST.md    human-readable run report: coverage, staleness, errors
@@ -51,12 +52,46 @@ actually knowable that day, so a correct as-of view is recoverable with
 
 | module | what | route | notes |
 |---|---|---|---|
-| `fred` | ~30 daily/monthly series: USD/INR, Brent, WTI, VIX, US yields, Fed funds, broad USD, US CPI, BIS real EER for India, India reserves ex-gold, nine EM crosses, six DXY constituents | `fredgraph.csv`, no key | Most reliable feed here |
+| `market` | 21 FX crosses (incl. USD/INR from 1973), Brent, WTI, VIX close, gold, US CPI, US 10y — from GitHub mirrors; plus daily US yields, Fed funds, broad USD, EM OAS, India reserves and BIS REER from FRED | mirrors on `raw.githubusercontent.com`, then FRED | Mirrors are authoritative and their failure is an error; FRED is best-effort and its failure is a reported coverage gap. See below |
 | `rbi_forward_book` | RBI net forward book from the IMF-format IRFCL reserve template, monthly from 2001 | `rbi.org.in` HTML | URL is constructible from the release date; we probe the last few weekdays of the month because Indian public holidays shift it |
-| `rbi_wss` | Weekly foreign exchange reserves | `www.rbi.org.in` HTML | Use the `www.` host — `m.rbi.org.in` serves a CAPTCHA for the same path |
+| `rbi_wss` | Weekly foreign exchange reserves, in US$ mn | `www.rbi.org.in` HTML | Use the `www.` host — `m.rbi.org.in` serves a CAPTCHA. Rows are dated by `as_on`, not publication |
 | `rbihub` | REER/NEER, forward premia, RBI spot intervention, ECB | `dbie.rbihub.in` JSON | **Backfill only** — see caveat below |
 | `nsdl_fpi` | Monthly foreign portfolio flows, equity and debt | `fpi.nsdl.co.in` ASP.NET | Year selection is a postback; VIEWSTATE is replayed |
-| `india_misc` | WPI files, gold monthly, NSE USD/INR option implied vol | mixed | IV is append-only, see below |
+| `india_misc` | WPI files, NSE USD/INR option implied vol | mixed | IV is append-only, see below |
+
+### Why FRED is not a hard dependency
+
+FRED times out from GitHub Actions runners — not a block, a slow read — and with
+thirty series it consumed an entire run and returned nothing, twice. The
+`datasets/` mirrors carry FRED's own H.10 numbers on the same CDN this repo is
+served from, and cover USD/INR plus twenty other crosses, oil, VIX, gold and US
+CPI. Those twenty-one crosses are both the EM peer set and all six DXY
+constituents, so the dollar index is reconstructible without FRED at all.
+
+Mirrors are therefore tier 1 and their failure is an error. The handful of series
+only FRED carries — daily US yields, Fed funds, the broad dollar index, EM credit
+spreads, India reserves ex-gold, BIS REER — are tier 2: attempted with a generous
+timeout and low concurrency, and if they fail they are listed as a coverage gap in
+`MANIFEST.md` and retried next run rather than failing the job.
+
+### Dating: `as_on` vs `published`
+
+The WSS release published on 14 August reports reserves **as on 07 August**.
+Dating rows by publication shifts the whole series forward by a week. Both are
+stored, because the point of this cache is knowing what was knowable when.
+
+### Repairing bad data without refetching
+
+Modules that parse HTML stamp a `parser_version` on each row. When the parser is
+fixed and the version bumped, stored rows below it are re-derived from the gzipped
+payloads in `raw/` — no network, no refetch, no waiting for the source to serve
+history again. This is the payoff of archiving raw first, and it exists because a
+parser bug shipped once already and would otherwise have been frozen into the data
+for ever, since a period already present in a CSV is never fetched again.
+
+Writes are also guarded: a source is never allowed to replace a series with one
+substantially shorter, because upstream mirrors are known to serve truncated
+payloads and one bad response would otherwise wipe years of history.
 
 ### Known caveats, encoded in the code
 
@@ -102,15 +137,17 @@ shorter series, is how a backtest ends up quietly wrong.
 pip install -r requirements.txt
 python selftest.py            # offline parser smoke tests
 python run.py --list          # available sources
-python run.py --only fred     # one source
+python run.py --only market   # one source
 python run.py                 # everything
 ```
 
-Note that the HTML parsers for the Indian sources were written against documented
-page structure rather than live pages, and the synthetic fixtures in `selftest.py`
-prove only that they run and handle messy numbers — not that they match reality.
-The first live Actions run is the real test; read `MANIFEST.md` afterwards and
-expect to adjust column mappings.
+`selftest.py` fixtures are reduced from real payloads archived in `raw/`, and the
+expected values are the officially published figures (RBI net short forward book
+50,586 for May-2026; reserves 707,002 for the 14 Aug release), so the suite checks
+correctness rather than merely that the code runs. It also pins the specific bugs
+that have shipped: reading a value off a label row instead of its maturity
+sub-rows, accepting RBI's HTTP-200 "Error occured" page as data, picking a
+variation column instead of the level, and treating a Unicode minus as a positive.
 
 ## Setup
 

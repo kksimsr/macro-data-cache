@@ -12,6 +12,7 @@ import gzip
 import hashlib
 import io
 import json
+import re
 import os
 import time
 from datetime import date, datetime, timedelta, timezone
@@ -61,7 +62,9 @@ def get(url: str, *, tries: int = 3, backoff: float = 2.0, session=None,
     last = None
     for i in range(tries):
         try:
-            r = sess.get(url, headers=h, timeout=timeout or TIMEOUT)
+            # (connect, read): a host that black-holes packets otherwise burns the
+            # full read timeout just to establish nothing.
+            r = sess.get(url, headers=h, timeout=(5, timeout or TIMEOUT))
             if r.status_code != 200:
                 last = FetchError(f"HTTP {r.status_code} for {url}")
             else:
@@ -91,10 +94,17 @@ def archive_raw(name: str, payload: bytes) -> str:
             with gzip.open(p, "rb") as fh:
                 if hashlib.sha256(fh.read()).hexdigest() == digest:
                     return digest
-        except OSError:
+        except Exception:  # noqa: BLE001
+            # A truncated archive (run killed mid-write) raises EOFError, which
+            # is NOT an OSError. Catching only OSError let that exception escape
+            # and killed the source on every subsequent run, permanently.
             pass
-    with gzip.open(p, "wb", compresslevel=9) as fh:
+    # Write via a temp file: the workflow can kill this process at any moment and
+    # then commits whatever is on disk, so a partial .gz must never land.
+    tmp = p.with_suffix(".gz.tmp")
+    with gzip.open(tmp, "wb", compresslevel=9) as fh:
         fh.write(payload)
+    os.replace(tmp, p)
     return digest
 
 
@@ -130,17 +140,32 @@ def read_existing(rel: str) -> list[dict]:
         return list(csv.DictReader(fh))
 
 
-def append_snapshot(rel: str, rows: list[dict]) -> Path:
-    """Append-only log, for series that exist only as live snapshots
-    (NSE option implied vol). History here can only be accumulated forward,
-    so never rewrite it."""
+def append_snapshot(rel: str, rows: list[dict], key: list[str] | None = None) -> Path:
+    """Append-only log for series that exist only as live snapshots (NSE option
+    implied vol). History can only be accumulated forward, so never rewrite it.
+
+    `key` names the columns that identify an observation. Without it the dedup
+    key included the capture timestamp, which differs every run, so a weekend
+    re-run appended a full duplicate copy of Friday's unchanged option chain.
+    """
     existing = read_existing(rel)
-    seen = {tuple(sorted(r.items())) for r in existing}
-    fresh = [r for r in rows if tuple(sorted(r.items())) not in seen]
-    if not fresh and existing:
+    if not rows and not existing:
+        raise FetchError(f"refusing to write empty {rel}")
+    key = key or (list(rows[0].keys()) if rows else [])
+    def _k(r):
+        return tuple(str(r.get(k, "")) for k in key)
+    seen = {_k(r) for r in existing}
+    fresh = [r for r in rows if _k(r) not in seen]
+    if not fresh:
         return DATA / rel
     combined = existing + fresh
-    fields = list(combined[0].keys())
+    # Union of fields, so adding a column later does not raise.
+    fields: list[str] = []
+    for r in combined:
+        for k in r:
+            if k not in fields:
+                fields.append(k)
+    combined = [{f: r.get(f, "") for f in fields} for r in combined]
     return write_csv(rel, combined, fields)
 
 
@@ -167,23 +192,44 @@ def month_iter(start: date, end: date):
         y, m = (y + 1, 1) if m == 12 else (y, m + 1)
 
 
+NUM_TOKEN = re.compile(r"^[-+]?\d[\d,]*(?:\.\d+)?$")
+
+
 def num(s) -> float | None:
-    """Parse a number out of messy table text. Handles thousands separators,
-    parenthesised negatives, en/em dashes used as nulls, footnote markers."""
+    """Parse a number out of messy table text, or return None.
+
+    Two failure modes found in adversarial review, both of which silently
+    corrupted values rather than rejecting them:
+
+    1. SIGN FLIP. The old filter kept only characters in ".-", so a Unicode
+       minus (U+2212) or en-dash (U+2013) — both of which RBI pages use for
+       negatives — was stripped and "\u22121366" parsed as +1366. On the forward
+       book that inverts the headline signal: net short becomes net long.
+    2. FUSION. get_text() flattens footnote superscripts into the cell, so
+       "50,586.00 1" became 50586.001 and "1,234 5,678" became 12345678. Now a
+       cell must contain exactly one numeric token or it is rejected.
+    """
     if s is None:
         return None
-    t = str(s).strip().replace(",", "").replace("\xa0", " ").strip()
-    if t in {"", "-", "--", "–", "—", "N.A.", "NA", "n.a.", "*"}:
+    t = str(s).replace("\xa0", " ").strip()
+    # Normalise dash variants to ASCII before any other handling.
+    for dash in ("\u2212", "\u2013", "\u2014", "\u2010", "\u2011"):
+        t = t.replace(dash, "-")
+    if t in {"", "-", "--", "N.A.", "NA", "n.a.", "*", "..", "\u2026"}:
         return None
     neg = t.startswith("(") and t.endswith(")")
     if neg:
-        t = t[1:-1]
-    t = t.lstrip("+")
-    keep = "".join(ch for ch in t if ch.isdigit() or ch in ".-")
-    if keep in {"", "-", ".", "-."}:
+        t = t[1:-1].strip()
+    # Exactly one token, or reject. Collapsing whitespace instead would turn
+    # "50,586.00 1" (value + flattened footnote) into 50586.001.
+    parts = t.split()
+    if len(parts) != 1:
+        return None
+    t = parts[0]
+    if not NUM_TOKEN.match(t):
         return None
     try:
-        v = float(keep)
+        v = float(t.replace(",", ""))
     except ValueError:
         return None
     return -v if neg else v
@@ -265,3 +311,19 @@ def pmap(fn, items, workers: int = 6):
             except Exception as e:  # noqa: BLE001
                 out.append(e)
         return out
+
+
+def guard_regression(dq: DQ, source: str, rel: str, new_rows: list,
+                     tolerance: float = 0.9) -> bool:
+    """Refuse to replace a series with a much shorter one.
+
+    Upstream mirrors and the DBIE mirror are both known to serve truncated
+    payloads. Without this, one bad response overwrites years of history with a
+    stub and the only recovery is git archaeology. Returns True if it is safe to
+    write."""
+    prev = read_existing(rel)
+    if prev and len(new_rows) < tolerance * len(prev):
+        dq.error(source, f"{rel}: refusing to write {len(new_rows)} rows over "
+                         f"{len(prev)} existing — upstream looks truncated")
+        return False
+    return True

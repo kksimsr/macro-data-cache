@@ -1,13 +1,24 @@
-"""NSDL FPI Monitor — net foreign portfolio flows, equity and debt.
+"""NSDL FPI Monitor — monthly net foreign portfolio flows, in INR crore.
 
-Classic ASP.NET: the numbers are in the server-rendered HTML, but selecting a
-different year is a postback, so we replay __VIEWSTATE / __EVENTVALIDATION to walk
-the year dropdown back to 2002.
+Flows are the fast fuse: a current account deficit funded by FDI is stable, one
+funded by portfolio money is a run risk. The debt split also isolates
+index-inclusion flows (Debt-FAR), which are a one-off level shift rather than
+sentiment and should not be read as a trend.
 
-Flows matter here as the fast fuse: a current account deficit funded by FDI is
-stable, one funded by portfolio money is a run risk. The debt split (general
-limit / VRR / FAR) also isolates index-inclusion flows, which are a one-off level
-shift rather than a trend and should not be read as sentiment.
+TABLE SHAPE, read off the archived page rather than guessed. Two header rows
+stack a group header over sub-columns:
+
+    group : Equity | Debt                              | Hybrid | Mutual Funds                                  | AIFs | Total
+    sub   : Equity | Debt-General Limit, Debt-VRR, Debt-FAR | Hybrid | Equity, Debt, Hybrid, Solution Oriented, Other | AIF  |
+
+giving 12 numeric columns per month. Verified: Jan-2026's eleven components sum
+to -29,239 against the published total of -29,240.
+
+POSTBACK. Year selection is an ASP.NET __doPostBack on the `ddl` dropdown. Runs 1
+and 2 lost every historical year to `RemoteDisconnected`. Two causes, both fixed
+here: the __VIEWSTATE was replayed from the *first* page for every subsequent
+year (ASP.NET expects the token from the most recent response), and the server
+drops reused keep-alive connections.
 """
 from __future__ import annotations
 
@@ -23,53 +34,129 @@ from .common import (DQ, Deadline, FetchError, archive_raw, get, num,
 NAME = "nsdl_fpi"
 URL = "https://www.fpi.nsdl.co.in/web/Reports/Yearwise.aspx?RptType=6"
 FIRST_YEAR = 2002
-MAX_YEARS_PER_RUN = 6   # postbacks are sequential (VIEWSTATE); pace the backfill
+MAX_YEARS_PER_RUN = 5
+
+# The page states the year it is showing: "Monthly FPI Net Investments
+# (Calendar Year - 2026)". An ASP.NET postback that is ignored returns HTTP 200
+# with the DEFAULT (current-year) table, so without checking this we would file
+# 2026's twelve months under 2015 and mark 2015 permanently done.
+YEAR_IN_PAGE_RE = re.compile(r"Calendar\s+Year\s*[-–]\s*(20\d\d)", re.I)
+
+MONTHS = ["January", "February", "March", "April", "May", "June", "July",
+          "August", "September", "October", "November", "December"]
+
+# Fallback names, used only if the header rows cannot be read.
+FALLBACK_COLS = ["equity", "debt_general_limit", "debt_vrr", "debt_far", "hybrid",
+                 "mf_equity", "mf_debt", "mf_hybrid", "mf_solution_oriented",
+                 "mf_other", "aif", "total"]
+
+
+def _slug(s: str) -> str:
+    s = re.sub(r"\(.*?\)", "", s).strip().lower()
+    return re.sub(r"[^a-z0-9]+", "_", s).strip("_") or "col"
 
 
 def _hidden(soup) -> dict:
-    out = {}
-    for inp in soup.find_all("input", type="hidden"):
-        if inp.get("name"):
-            out[inp["name"]] = inp.get("value", "")
-    return out
+    return {i["name"]: i.get("value", "")
+            for i in soup.find_all("input", type="hidden") if i.get("name")}
 
 
 def _year_select(soup):
     for sel in soup.find_all("select"):
-        name = (sel.get("name") or "").lower()
-        opts = [o.get("value", "") for o in sel.find_all("option")]
-        if any(re.fullmatch(r"\d{4}", (o or "")) for o in opts) or "year" in name:
+        if sel.get("name") and any(
+                re.fullmatch(r"\d{4}", (o.get("value") or "").strip())
+                for o in sel.find_all("option")):
             return sel
     return None
 
 
-def _rows_from(soup, year: int) -> list[dict]:
-    out = []
-    for tr in soup.find_all("tr"):
-        cells = [c.get_text(" ", strip=True) for c in tr.find_all(["td", "th"])]
-        if len(cells) < 3:
+def _columns(rows: list[list[str]]) -> list[str]:
+    """Build column names by pairing the group header with its sub-headers."""
+    groups = subs = None
+    for r in rows[:6]:
+        if not groups and "Equity" in r and "Total" in r and len(r) <= 8:
+            groups = r
+        elif groups and subs is None and "Equity" in r and len(r) >= 8:
+            subs = r
+    if not subs:
+        return list(FALLBACK_COLS)
+    # The Mutual Funds block reuses Equity/Debt/Hybrid, so everything from the
+    # SECOND "Equity" up to "AIF" is prefixed mf_. Detecting the block start this
+    # way (rather than de-duplicating names as they collide) keeps the whole block
+    # consistently prefixed, including Solution Oriented and Other.
+    names, in_mf, seen_equity = [], False, False
+    for raw in subs:
+        key = _slug(raw)
+        if key == "equity":
+            if seen_equity:
+                in_mf = True
+            seen_equity = True
+        elif key.startswith("aif") or key.startswith("alternative"):
+            in_mf = False
+        names.append(("mf_" + key) if in_mf else key)
+    names.append("total")
+    if len(set(names)) != len(names):
+        return list(FALLBACK_COLS)
+    return names
+
+
+def _page_year(soup) -> int | None:
+    m = YEAR_IN_PAGE_RE.search(soup.get_text(" ", strip=True))
+    return int(m.group(1)) if m else None
+
+
+def _rows_from(soup, year: int, dq: DQ) -> tuple[list[dict], list[str]]:
+    for t in soup.find_all("table"):
+        rows = [[c.get_text(" ", strip=True) for c in tr.find_all(["td", "th"])]
+                for tr in t.find_all("tr")]
+        rows = [r for r in rows if r]
+        month_rows = [r for r in rows
+                      if r and r[0].strip().title() in MONTHS and len(r) > 2]
+        if not month_rows:
             continue
-        label = cells[0]
-        if not re.match(r"^[A-Za-z]{3,9}", label):
-            continue
-        mon = label[:3].title()
-        if mon not in ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]:
-            continue
-        nums = [num(c) for c in cells[1:]]
-        if not any(n is not None for n in nums):
-            continue
-        rec = {"month": f"{year}-{['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].index(mon)+1:02d}"}
-        for i, n in enumerate(nums):
-            rec[f"col{i+1}"] = "" if n is None else f"{n:.2f}"
-        out.append(rec)
-    return out
+        cols = _columns(rows)
+        width = max(len(r) - 1 for r in month_rows)
+        if len(cols) != width:
+            # Positional col1..colN used to be merged into the CSV, creating a
+            # file with two disjoint schemas and marking the year permanently
+            # done so a later parser fix could never repair it. Treat it as a
+            # failure instead and leave the year outstanding.
+            dq.warn(NAME, f"{year}: header gave {len(cols)} names for {width} data "
+                          f"columns — skipping this year rather than storing "
+                          f"unnamed columns")
+            return [], []
+        out = []
+        for r in month_rows:
+            m = MONTHS.index(r[0].strip().title()) + 1
+            rec = {"month": f"{year}-{m:02d}"}
+            vals = [num(c) for c in r[1:]]
+            if not any(v is not None for v in vals):
+                continue
+            for i, name in enumerate(cols):
+                v = vals[i] if i < len(vals) else None
+                rec[name] = "" if v is None else f"{v:.2f}"
+            out.append(rec)
+        return out, cols
+    return [], []
+
+
+def _post(sess, payload, referer):
+    r = sess.post(URL, data=payload, timeout=45, headers={
+        "Referer": referer, "Origin": "https://www.fpi.nsdl.co.in",
+        "Content-Type": "application/x-www-form-urlencoded",
+        # The server drops reused keep-alive sockets, which surfaced as
+        # RemoteDisconnected on every year after the first.
+        "Connection": "close",
+    })
+    if r.status_code != 200:
+        raise FetchError(f"HTTP {r.status_code}")
+    return r.content
 
 
 def run(dq: DQ, deadline: Deadline | None = None) -> dict:
     sess = requests.Session()
     try:
-        first = get(URL, session=sess, expect="html")
+        first = get(URL, session=sess, expect="Yearwise")
     except FetchError as e:
         raise FetchError(f"NSDL unreachable: {e}") from e
     archive_raw("nsdl/yearwise_default.html", first)
@@ -79,70 +166,133 @@ def run(dq: DQ, deadline: Deadline | None = None) -> dict:
     years = []
     if sel:
         for o in sel.find_all("option"):
-            v = (o.get("value") or o.get_text(strip=True) or "").strip()
+            v = (o.get("value") or "").strip()
             if re.fullmatch(r"\d{4}", v) and FIRST_YEAR <= int(v) <= date.today().year:
                 years.append(v)
     if not years:
-        dq.warn(NAME, "year dropdown not found — capturing default page only")
+        dq.warn(NAME, "year dropdown not found — capturing the default page only")
         years = [str(date.today().year)]
 
-    # Keep whatever we already have; only fetch a slice of missing years per run,
-    # newest first, plus always the current year (which is still changing).
     prior = {r["month"]: r for r in read_existing("india/fpi_flows_monthly.csv")}
-    have_years = {k[:4] for k in prior}
     cur = str(date.today().year)
-    missing = [y for y in reversed(years) if y not in have_years or y == cur]
-    todo_years = sorted(set(missing[:MAX_YEARS_PER_RUN]) | {cur} & set(years))
+    # A year counts as done only when it is COMPLETE. Keying on "any month
+    # present" meant a truncated page permanently froze the other eleven months.
+    counts: dict[str, int] = {}
+    for k in prior:
+        counts[k[:4]] = counts.get(k[:4], 0) + 1
+    have = {y for y in counts if counts[y] >= 12}
+    # Always refresh the current year; backfill the rest newest-first, a slice per run.
+    todo = [y for y in reversed(years) if y not in have and y != cur][:MAX_YEARS_PER_RUN]
+    todo = sorted(set(todo) | {cur})
     if deadline and deadline.expired:
-        dq.warn(NAME, "skipped: no time budget left this run")
-        todo_years = [cur] if cur in years else []
-    remaining_after = len([y for y in years if y not in have_years]) - len(todo_years)
+        todo = [cur]
+    remaining = len([y for y in years if y not in have and y != cur]) - \
+        len([y for y in todo if y != cur])
 
-    all_rows: list[dict] = []
-    header_note = None
-    for y in todo_years:
-        if y == years[-1] or len(years) == 1:
-            page, s = first, soup
+    collected: list[dict] = []
+    cols_seen: list[str] = []
+    cur_soup = soup
+    for y in todo:
+        if y == cur:
+            page, s = first, soup                 # the default view is the current year
+            shown = _page_year(s)
+            if shown is not None and shown != int(y):
+                # In early January the default view may still show last year.
+                dq.warn(NAME, f"default page shows {shown}, not {y} — filing it "
+                              f"under {shown} rather than mislabelling")
+                y = str(shown)
+        elif deadline and deadline.expired:
+            dq.warn(NAME, f"{y}: skipped, out of time budget")
+            continue
         else:
-            payload = _hidden(soup)
+            payload = _hidden(cur_soup)           # token from the LATEST response
             payload[sel["name"]] = y
             payload["__EVENTTARGET"] = sel["name"]
             payload["__EVENTARGUMENT"] = ""
-            try:
-                r = sess.post(URL, data=payload, timeout=60,
-                              headers={"User-Agent": "Mozilla/5.0"})
-                if r.status_code != 200:
-                    dq.warn(NAME, f"{y}: postback HTTP {r.status_code}")
-                    continue
-                page = r.content
-            except Exception as e:  # noqa: BLE001
-                dq.warn(NAME, f"{y}: postback failed ({e})")
+            page = None
+            for attempt in range(3):
+                try:
+                    page = _post(sess, payload, URL)
+                    break
+                except Exception as e:            # noqa: BLE001
+                    if attempt == 2:
+                        dq.warn(NAME, f"{y}: postback failed after 3 tries ({e})")
+                    else:                         # rebuild the session and retry
+                        sess = requests.Session()
+                        try:
+                            fresh = get(URL, session=sess, tries=1)
+                            cur_soup = BeautifulSoup(fresh, "lxml")
+                            payload = _hidden(cur_soup)
+                            payload[sel["name"]] = y
+                            payload["__EVENTTARGET"] = sel["name"]
+                            payload["__EVENTARGUMENT"] = ""
+                        except FetchError:
+                            pass
+            if page is None:
                 continue
             s = BeautifulSoup(page, "lxml")
+            cur_soup = s                          # carry the token forward
+            shown = _page_year(s)
+            if shown is not None and shown != int(y):
+                dq.warn(NAME, f"{y}: postback returned the {shown} table — "
+                              f"discarding rather than mislabelling")
+                continue
         archive_raw(f"nsdl/yearwise_{y}.html", page)
-        if header_note is None:
-            heads = [th.get_text(" ", strip=True) for th in s.find_all("th")]
-            header_note = " | ".join(heads[:12])
-        rows = _rows_from(s, int(y))
+        rows, cols = _rows_from(s, int(y), dq)
         if not rows:
-            dq.warn(NAME, f"{y}: no monthly rows parsed")
-        all_rows.extend(rows)
+            dq.warn(NAME, f"{y}: no monthly rows parsed (raw archived)")
+            continue
+        if cols and not cols_seen:
+            cols_seen = cols
+        collected.extend(rows)
 
-    # Merge with what previous runs already collected.
     merged = dict(prior)
-    for r in all_rows:
+    for r in collected:
         merged[r["month"]] = r
-    all_rows = list(merged.values())
-    if not all_rows:
-        raise FetchError("NSDL: no rows parsed from any year and nothing on disk")
-    fields = ["month"] + sorted({k for r in all_rows for k in r if k != "month"},
-                                key=lambda x: int(x[3:]) if x[3:].isdigit() else 999)
-    all_rows = [{f: r.get(f, "") for f in fields} for r in all_rows]
-    all_rows.sort(key=lambda r: r["month"])
-    write_csv("india/fpi_flows_monthly.csv", all_rows, fields)
-    dq.warn(NAME, f"columns are positional (col1..colN) — map them once against the "
-                  f"live header before use. Header seen: {header_note}")
-    dq.note(NAME, f"{len(all_rows)} months on file, units Rs crore; "
-                  f"~{max(0, remaining_after)} years still to backfill")
-    return {"files": ["data/india/fpi_flows_monthly.csv"],
-            "n": len(all_rows), "last": all_rows[-1]["month"]}
+    if not merged:
+        raise FetchError("NSDL: nothing parsed and nothing on disk")
+
+    # Field order is PINNED to the canonical list, not to whichever year happened
+    # to be parsed first. Latching it from the loop meant a backfill run that
+    # started at 2016 reshuffled the whole file's schema versus one that started
+    # at 2021, rewriting every row and breaking positional consumers.
+    fields = ["month"] + list(FALLBACK_COLS)
+    for c in (cols_seen or []):
+        if c not in fields:
+            fields.append(c)
+    for r in merged.values():
+        for k in r:
+            if k not in fields:
+                fields.append(k)
+    ordered = [{f: merged[m].get(f, "") for f in fields} for m in sorted(merged)]
+    write_csv("india/fpi_flows_monthly.csv", ordered, fields)
+
+    _reconcile(dq, ordered)
+    dq.note(NAME, f"{len(ordered)} months on file (units: INR crore); "
+                  f"~{max(0, remaining)} years still to backfill")
+    return {"files": ["data/india/fpi_flows_monthly.csv"], "n": len(ordered),
+            "last": ordered[-1]["month"], "backfill_remaining": max(0, remaining)}
+
+
+def _reconcile(dq: DQ, rows: list[dict]) -> None:
+    """The components must sum to the published total. If they stop doing so the
+    column mapping has drifted, which would silently corrupt the flows factor."""
+    if not rows or "total" not in rows[0]:
+        return
+    bad = 0
+    checked = 0
+    for r in rows[-24:]:
+        tot = num(r.get("total"))
+        parts = [num(v) for k, v in r.items()
+                 if k not in {"month", "total"} and not k.startswith("col")]
+        parts = [p for p in parts if p is not None]
+        if tot is None or len(parts) < 5:
+            continue
+        checked += 1
+        if abs(sum(parts) - tot) > max(2.0, abs(tot) * 0.01):
+            bad += 1
+    if checked and bad > checked * 0.2:
+        dq.error(NAME, f"components fail to reconcile to the published total in "
+                       f"{bad}/{checked} recent months — column mapping has drifted")
+    elif checked:
+        dq.note(NAME, f"column mapping reconciles in {checked - bad}/{checked} months")

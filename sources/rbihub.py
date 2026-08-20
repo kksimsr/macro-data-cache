@@ -16,7 +16,8 @@ from __future__ import annotations
 import json
 from datetime import date
 
-from .common import DQ, FetchError, archive_raw, get, write_csv
+from .common import (DQ, FetchError, archive_raw, get, guard_regression,
+                     write_csv)
 
 NAME = "rbihub"
 BASE = "https://dbie.rbihub.in/data/{}.json"
@@ -85,6 +86,9 @@ def _last_date(rows: list[dict]) -> str | None:
 def run(dq: DQ, deadline=None) -> dict:
     out = {"files": [], "series": {}}
     for slug, (path, label, max_age) in SERIES.items():
+        if deadline and deadline.expired:
+            dq.warn(NAME, f"{slug}: skipped, out of time budget")
+            continue
         try:
             body = get(BASE.format(slug))
         except FetchError as e:
@@ -97,13 +101,19 @@ def run(dq: DQ, deadline=None) -> dict:
             dq.error(NAME, f"{slug}: invalid JSON ({e})")
             continue
 
-        rows = _sdmx_to_rows(obj) if "dates" in obj and "values" in obj else _generic_to_rows(obj)
+        is_sdmx = isinstance(obj, dict) and "dates" in obj and "values" in obj
+        rows = _sdmx_to_rows(obj) if is_sdmx else _generic_to_rows(obj)
         if not rows:
             dq.error(NAME, f"{slug}: payload contained no tabular rows")
             continue
         if len(rows) < 30:
-            dq.error(NAME, f"{slug}: only {len(rows)} rows — looks like a truncated "
-                           f"stub, not a real series (this mirror has known stubs)")
+            # Truncated stubs are a DOCUMENTED, recurring property of this mirror,
+            # so this is a warning, not a run-failing error — but we must not
+            # write it over the good history, which the previous version did by
+            # falling through to write_csv.
+            dq.warn(NAME, f"{slug}: only {len(rows)} rows — truncated stub, keeping "
+                          f"the existing series")
+            continue
 
         # Normalise field order across heterogeneous payloads.
         fields: list[str] = []
@@ -112,6 +122,8 @@ def run(dq: DQ, deadline=None) -> dict:
                 if k not in fields:
                     fields.append(k)
         rows = [{f: r.get(f, "") for f in fields} for r in rows]
+        if not guard_regression(dq, NAME, path, rows):
+            continue
         write_csv(path, rows, fields)
         out["files"].append("data/" + path)
 
@@ -131,4 +143,6 @@ def run(dq: DQ, deadline=None) -> dict:
 
     if not out["series"]:
         raise FetchError("rbihub: no series retrieved")
+    # A lexicographic max over non-ISO date strings gives a nonsense "latest".
+
     return out
