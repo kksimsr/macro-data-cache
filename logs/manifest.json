@@ -1,7 +1,7 @@
 {
-  "run_started_utc": "2026-08-20T11:02:18+00:00",
-  "run_finished_utc": "2026-08-20T11:10:13+00:00",
-  "duration_s": 475.8,
+  "run_started_utc": "2026-08-20T12:20:40+00:00",
+  "run_finished_utc": "2026-08-20T12:28:21+00:00",
+  "duration_s": 461.4,
   "sources": {
     "fred": {
       "status": "failed",
@@ -13,11 +13,11 @@
       "files": [
         "data/rbi/forward_book.csv"
       ],
-      "n_months": 34,
-      "parsed": 34,
-      "backfill_remaining": 267,
+      "n_months": 63,
+      "parsed": 63,
+      "backfill_remaining": 237,
       "last": "2026-06",
-      "seconds": 8.4
+      "seconds": 28.1
     },
     "rbi_wss": {
       "status": "ok",
@@ -25,9 +25,9 @@
         "data/rbi/fx_reserves_weekly.csv"
       ],
       "n_weeks": 60,
-      "last": "2026-08-14",
+      "last": "2026-08-07",
       "backfill_remaining": 1329,
-      "seconds": 22.7
+      "seconds": 23.1
     },
     "rbihub": {
       "status": "ok",
@@ -59,7 +59,7 @@
           "last": "Sep"
         }
       },
-      "seconds": 1.5
+      "seconds": 1.4
     },
     "nsdl_fpi": {
       "status": "ok",
@@ -68,192 +68,319 @@
       ],
       "n": 8,
       "last": "2026-08",
-      "seconds": 16.7
+      "backfill_remaining": 19,
+      "seconds": 37.8
     },
     "india_misc": {
       "status": "ok",
       "files": [
+        "data/india/usdinr_option_iv_log.csv",
         "raw/wpi/wpi_monthly_index_202608.xlsx.gz",
-        "raw/wpi/monthly_index_202607.xls.gz",
-        "data/global/gold_monthly.csv",
-        "data/india/usdinr_option_iv_log.csv"
+        "raw/wpi/monthly_index_202607.xls.gz"
       ],
-      "seconds": 4.3
+      "seconds": 6.7
+    },
+    "market": {
+      "status": "ok",
+      "files": [
+        "data/market/fx_AUD.csv",
+        "data/market/fx_BRL.csv",
+        "data/market/fx_CAD.csv",
+        "data/market/fx_CHF.csv",
+        "data/market/fx_CNY.csv",
+        "data/market/fx_DKK.csv",
+        "data/market/fx_EUR.csv",
+        "data/market/fx_GBP.csv",
+        "data/market/fx_HKD.csv",
+        "data/market/fx_INR.csv",
+        "data/market/fx_JPY.csv",
+        "data/market/fx_KRW.csv",
+        "data/market/fx_MXN.csv",
+        "data/market/fx_MYR.csv",
+        "data/market/fx_NOK.csv",
+        "data/market/fx_NZD.csv",
+        "data/market/fx_SEK.csv",
+        "data/market/fx_SGD.csv",
+        "data/market/fx_THB.csv",
+        "data/market/fx_TWD.csv",
+        "data/market/fx_ZAR.csv",
+        "data/market/brent_daily.csv",
+        "data/market/wti_daily.csv",
+        "data/market/vix_daily.csv",
+        "data/market/gold_monthly.csv",
+        "data/market/us_cpi_monthly.csv",
+        "data/market/us_10y_monthly.csv"
+      ],
+      "series": {
+        "fx_AUD": {
+          "label": "AUD per USD",
+          "n": 13940,
+          "first": "1971-01-04",
+          "last": "2026-08-14"
+        },
+        "fx_BRL": {
+          "label": "BRL per USD",
+          "n": 7930,
+          "first": "1995-01-02",
+          "last": "2026-08-14"
+        },
+        "fx_CAD": {
+          "label": "CAD per USD",
+          "n": 13953,
+          "first": "1971-01-04",
+          "last": "2026-08-14"
+        },
+        "fx_CHF": {
+          "label": "CHF per USD",
+          "n": 13947,
+          "first": "1971-01-04",
+          "last": "2026-08-14"
+        },
+        "fx_CNY": {
+          "label": "CNY per USD",
+          "n": 11387,
+          "first": "1981-01-02",
+          "last": "2026-08-14"
+        },
+        "fx_DKK": {
+          "label": "DKK per USD",
+          "n": 13946,
+          "first": "1971-01-04",
+          "last": "2026-08-14"
+        },
+        "fx_EUR": {
+          "label": "EUR per USD",
+          "n": 6926,
+          "first": "1999-01-04",
+          "last": "2026-08-14"
+        },
+        "fx_GBP": {
+          "label": "GBP per USD",
+          "n": 13947,
+          "first": "1971-01-04",
+          "last": "2026-08-14"
+        },
+        "fx_HKD": {
+          "label": "HKD per USD",
+          "n": 11447,
+          "first": "1981-01-02",
+          "last": "2026-08-14"
+        },
+        "fx_INR": {
+          "label": "INR per USD",
+          "n": 13439,
+          "first": "1973-01-02",
+          "last": "2026-08-14"
+        },
+        "fx_JPY": {
+          "label": "JPY per USD",
+          "n": 13941,
+          "first": "1971-01-04",
+          "last": "2026-08-14"
+        },
+        "fx_KRW": {
+          "label": "KRW per USD",
+          "n": 11333,
+          "first": "1981-04-13",
+          "last": "2026-08-14"
+        },
+        "fx_MXN": {
+          "label": "MXN per USD",
+          "n": 8215,
+          "first": "1993-11-08",
+          "last": "2026-08-14"
+        },
+        "fx_MYR": {
+          "label": "MYR per USD",
+          "n": 13925,
+          "first": "1971-01-04",
+          "last": "2026-08-14"
+        },
+        "fx_NOK": {
+          "label": "NOK per USD",
+          "n": 13946,
+          "first": "1971-01-04",
+          "last": "2026-08-14"
+        },
+        "fx_NZD": {
+          "label": "NZD per USD",
+          "n": 13931,
+          "first": "1971-01-04",
+          "last": "2026-08-14"
+        },
+        "fx_SEK": {
+          "label": "SEK per USD",
+          "n": 13946,
+          "first": "1971-01-04",
+          "last": "2026-08-14"
+        },
+        "fx_SGD": {
+          "label": "SGD per USD",
+          "n": 11446,
+          "first": "1981-01-02",
+          "last": "2026-08-14"
+        },
+        "fx_THB": {
+          "label": "THB per USD",
+          "n": 11366,
+          "first": "1981-01-02",
+          "last": "2026-08-14"
+        },
+        "fx_TWD": {
+          "label": "TWD per USD",
+          "n": 10460,
+          "first": "1983-10-03",
+          "last": "2026-08-14"
+        },
+        "fx_ZAR": {
+          "label": "ZAR per USD",
+          "n": 11690,
+          "first": "1980-01-02",
+          "last": "2026-08-14"
+        },
+        "brent_daily": {
+          "label": "Brent crude, daily",
+          "n": 9958,
+          "first": "1987-05-20",
+          "last": "2026-08-18"
+        },
+        "wti_daily": {
+          "label": "WTI crude, daily",
+          "n": 10226,
+          "first": "1986-01-02",
+          "last": "2026-08-18"
+        },
+        "vix_daily": {
+          "label": "VIX close, daily",
+          "n": 9253,
+          "first": "1990-01-02",
+          "last": "2026-08-18"
+        },
+        "gold_monthly": {
+          "label": "Gold USD/oz, monthly",
+          "n": 2323,
+          "first": "1833-01",
+          "last": "2026-07"
+        },
+        "us_cpi_monthly": {
+          "label": "US CPI, monthly",
+          "n": 1361,
+          "first": "1913-01-01",
+          "last": "2026-06-01"
+        },
+        "us_10y_monthly": {
+          "label": "US 10y yield, monthly",
+          "n": 879,
+          "first": "1953-04-01",
+          "last": "2026-06-01"
+        }
+      },
+      "gaps": [
+        "DGS10",
+        "DGS2",
+        "DFII10",
+        "DFF",
+        "DTWEXBGS",
+        "BAMLEMCBPIOAS",
+        "TRESEGINM052N",
+        "RBINBIS"
+      ],
+      "seconds": 364.3
     }
   },
   "dq": {
-    "errors": 31,
-    "warnings": 8,
+    "errors": 2,
+    "warnings": 16,
     "entries": [
       {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXINUS (USD/INR spot, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
+        "level": "note",
+        "source": "india_misc",
+        "msg": "NSE IV: 13 strike-legs captured, 11 with open interest"
+      },
+      {
+        "level": "note",
+        "source": "india_misc",
+        "msg": "WPI (2022-23 base) latest file: 202608"
+      },
+      {
+        "level": "note",
+        "source": "india_misc",
+        "msg": "WPI (2011-12 base) latest file: 202607"
+      },
+      {
+        "level": "note",
+        "source": "market",
+        "msg": "FX mirror: 21 currencies; INR 13439 obs to 2026-08-14"
+      },
+      {
+        "level": "warn",
+        "source": "market",
+        "msg": "DGS10 (US 10y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
+      },
+      {
+        "level": "warn",
+        "source": "market",
+        "msg": "DGS2 (US 2y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
+      },
+      {
+        "level": "warn",
+        "source": "market",
+        "msg": "DFII10 (US 10y TIPS real, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
+      },
+      {
+        "level": "warn",
+        "source": "market",
+        "msg": "DFF (Fed funds effective, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
+      },
+      {
+        "level": "warn",
+        "source": "market",
+        "msg": "DTWEXBGS (Broad USD index, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
+      },
+      {
+        "level": "warn",
+        "source": "market",
+        "msg": "BAMLEMCBPIOAS (EM corporate OAS, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
+      },
+      {
+        "level": "warn",
+        "source": "market",
+        "msg": "TRESEGINM052N (India reserves excl gold, monthly (IMF IFS)) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
+      },
+      {
+        "level": "warn",
+        "source": "market",
+        "msg": "RBINBIS (BIS real broad EER, India, monthly) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
+      },
+      {
+        "level": "warn",
+        "source": "market",
+        "msg": "coverage gaps (8): DGS10, DGS2, DFII10, DFF, DTWEXBGS, BAMLEMCBPIOAS, TRESEGINM052N, RBINBIS \u2014 FRED-only series, no mirror exists; retried next run"
+      },
+      {
+        "level": "note",
+        "source": "market",
+        "msg": "27 series written, 8 gaps"
       },
       {
         "level": "error",
-        "source": "fred",
-        "msg": "DTWEXBGS (Broad USD index, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
+        "source": "rbi_forward_book",
+        "msg": "2023-12: net short -2,184 is a >75% collapse from 2023-11 (11,901) \u2014 suspect wrong cell"
       },
       {
         "level": "error",
-        "source": "fred",
-        "msg": "DTWEXB (Broad USD index (legacy, ends 2019-12)) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DGS10 (US 10y CMT, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DFII10 (US 10y TIPS real, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DGS2 (US 2y CMT, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DFF (Fed funds effective, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "VIXCLS (VIX close, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "BAMLEMCBPIOAS (EM corporate OAS, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "CPIAUCSL (US CPI SA, monthly) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DCOILBRENTEU (Brent, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DCOILWTICO (WTI, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "RBINBIS (BIS real broad EER India, monthly) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "TRESEGINM052N (India reserves excl gold, monthly) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "INDCPIALLMINMEI (India CPI (OECD) \u2014 STALE ~2025-03) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXCHUS (CNY/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXKOUS (KRW/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXTAUS (TWD/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXSIUS (SGD/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXTHUS (THB/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXMAUS (MYR/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXBZUS (BRL/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXMXUS (MXN/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXSFUS (ZAR/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXUSEU (USD/EUR) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXJPUS (JPY/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXUSUK (USD/GBP) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXCAUS (CAD/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXSDUS (SEK/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "DEXSZUS (CHF/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-      },
-      {
-        "level": "error",
-        "source": "fred",
-        "msg": "source failed: FetchError: FRED returned nothing at all. First error was: graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
+        "source": "rbi_forward_book",
+        "msg": "2024-03: net short 541 is a >75% collapse from 2024-02 (-9,694) \u2014 suspect wrong cell"
       },
       {
         "level": "note",
         "source": "rbi_forward_book",
-        "msg": "34 months on file, 34 fetched, 2 missed, 34 parsed, ~267 left to backfill"
+        "msg": "63 months on file, 33 fetched, 3 missed, 63 parsed, ~237 left to backfill"
       },
       {
         "level": "note",
         "source": "rbi_wss_reserves",
-        "msg": "60 weeks on file (60 new); latest 2026-08-14; ~1329 still to backfill"
-      },
-      {
-        "level": "note",
-        "source": "rbi_wss_reserves",
-        "msg": "units are as published (US$ million); verify the column pick against one release before trusting levels"
+        "msg": "60 weeks (units US$ mn, dated by as-on not publication); 60 new; ~1329 to backfill"
       },
       {
         "level": "warn",
@@ -288,57 +415,37 @@
       {
         "level": "warn",
         "source": "nsdl_fpi",
-        "msg": "2021: postback failed (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
+        "msg": "2021: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
       },
       {
         "level": "warn",
         "source": "nsdl_fpi",
-        "msg": "2022: postback failed (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
+        "msg": "2022: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
       },
       {
         "level": "warn",
         "source": "nsdl_fpi",
-        "msg": "2023: postback failed (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
+        "msg": "2023: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
       },
       {
         "level": "warn",
         "source": "nsdl_fpi",
-        "msg": "2024: postback failed (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
+        "msg": "2024: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
       },
       {
         "level": "warn",
         "source": "nsdl_fpi",
-        "msg": "2025: postback failed (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
-      },
-      {
-        "level": "warn",
-        "source": "nsdl_fpi",
-        "msg": "columns are positional (col1..colN) \u2014 map them once against the live header before use. Header seen:  | Monthly FPI Net Investments (Calendar Year - 2026) | Currency: INR USD | Calendar Year | INR Crores | Equity | Debt | Hybrid | Mutual Funds | Alternative Investment Funds(AIFs) | Total | Equity"
+        "msg": "2025: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
       },
       {
         "level": "note",
         "source": "nsdl_fpi",
-        "msg": "8 months on file, units Rs crore; ~18 years still to backfill"
+        "msg": "column mapping reconciles in 7/7 months"
       },
       {
         "level": "note",
-        "source": "india_misc",
-        "msg": "WPI (2022-23 base) latest file: 202608"
-      },
-      {
-        "level": "note",
-        "source": "india_misc",
-        "msg": "WPI (2011-12 base) latest file: 202607"
-      },
-      {
-        "level": "note",
-        "source": "india_misc",
-        "msg": "gold: 2323 months, last 2026-07 = $4073.00"
-      },
-      {
-        "level": "note",
-        "source": "india_misc",
-        "msg": "NSE IV: 13 strike-legs captured, 11 with open interest"
+        "source": "nsdl_fpi",
+        "msg": "8 months on file (units: INR crore); ~19 years still to backfill"
       }
     ]
   }
