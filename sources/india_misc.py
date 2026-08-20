@@ -141,7 +141,7 @@ def _nse_iv(dq: DQ) -> list[str]:
     return ["data/india/usdinr_option_iv_log.csv"]
 
 
-def run(dq: DQ) -> dict:
+def run(dq: DQ, deadline=None) -> dict:
     files: list[str] = []
     errs = 0
     for label, fn in (("wpi", _wpi), ("gold", _gold), ("nse_iv", _nse_iv)):

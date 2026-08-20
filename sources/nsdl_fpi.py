@@ -17,11 +17,13 @@ from datetime import date
 import requests
 from bs4 import BeautifulSoup
 
-from .common import DQ, FetchError, archive_raw, get, num, write_csv
+from .common import (DQ, Deadline, FetchError, archive_raw, get, num,
+                     read_existing, write_csv)
 
 NAME = "nsdl_fpi"
 URL = "https://www.fpi.nsdl.co.in/web/Reports/Yearwise.aspx?RptType=6"
 FIRST_YEAR = 2002
+MAX_YEARS_PER_RUN = 6   # postbacks are sequential (VIEWSTATE); pace the backfill
 
 
 def _hidden(soup) -> dict:
@@ -64,7 +66,7 @@ def _rows_from(soup, year: int) -> list[dict]:
     return out
 
 
-def run(dq: DQ) -> dict:
+def run(dq: DQ, deadline: Deadline | None = None) -> dict:
     sess = requests.Session()
     try:
         first = get(URL, session=sess, expect="html")
@@ -84,9 +86,21 @@ def run(dq: DQ) -> dict:
         dq.warn(NAME, "year dropdown not found — capturing default page only")
         years = [str(date.today().year)]
 
+    # Keep whatever we already have; only fetch a slice of missing years per run,
+    # newest first, plus always the current year (which is still changing).
+    prior = {r["month"]: r for r in read_existing("india/fpi_flows_monthly.csv")}
+    have_years = {k[:4] for k in prior}
+    cur = str(date.today().year)
+    missing = [y for y in reversed(years) if y not in have_years or y == cur]
+    todo_years = sorted(set(missing[:MAX_YEARS_PER_RUN]) | {cur} & set(years))
+    if deadline and deadline.expired:
+        dq.warn(NAME, "skipped: no time budget left this run")
+        todo_years = [cur] if cur in years else []
+    remaining_after = len([y for y in years if y not in have_years]) - len(todo_years)
+
     all_rows: list[dict] = []
     header_note = None
-    for y in years:
+    for y in todo_years:
         if y == years[-1] or len(years) == 1:
             page, s = first, soup
         else:
@@ -114,15 +128,21 @@ def run(dq: DQ) -> dict:
             dq.warn(NAME, f"{y}: no monthly rows parsed")
         all_rows.extend(rows)
 
+    # Merge with what previous runs already collected.
+    merged = dict(prior)
+    for r in all_rows:
+        merged[r["month"]] = r
+    all_rows = list(merged.values())
     if not all_rows:
-        raise FetchError("NSDL: no rows parsed from any year")
+        raise FetchError("NSDL: no rows parsed from any year and nothing on disk")
     fields = ["month"] + sorted({k for r in all_rows for k in r if k != "month"},
-                                key=lambda x: int(x[3:]))
+                                key=lambda x: int(x[3:]) if x[3:].isdigit() else 999)
     all_rows = [{f: r.get(f, "") for f in fields} for r in all_rows]
     all_rows.sort(key=lambda r: r["month"])
     write_csv("india/fpi_flows_monthly.csv", all_rows, fields)
     dq.warn(NAME, f"columns are positional (col1..colN) — map them once against the "
                   f"live header before use. Header seen: {header_note}")
-    dq.note(NAME, f"{len(all_rows)} months, {years[0]}..{years[-1]}, units Rs crore")
+    dq.note(NAME, f"{len(all_rows)} months on file, units Rs crore; "
+                  f"~{max(0, remaining_after)} years still to backfill")
     return {"files": ["data/india/fpi_flows_monthly.csv"],
             "n": len(all_rows), "last": all_rows[-1]["month"]}

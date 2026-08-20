@@ -37,7 +37,8 @@ HEADERS = {
     "Accept-Language": "en-GB,en;q=0.9",
 }
 
-TIMEOUT = 60
+TIMEOUT = 20      # per-request; probing dead URLs must fail fast
+PROBE_TIMEOUT = 10
 
 
 class FetchError(Exception):
@@ -49,7 +50,8 @@ def utcnow() -> str:
 
 
 def get(url: str, *, tries: int = 3, backoff: float = 2.0, session=None,
-        headers: dict | None = None, expect: str | None = None) -> bytes:
+        headers: dict | None = None, expect: str | None = None,
+        timeout: int | None = None) -> bytes:
     """GET with retries. `expect` is a substring that must appear in the body;
     it is how we detect CAPTCHA interstitials and JS shells that return HTTP 200."""
     sess = session or requests
@@ -59,7 +61,7 @@ def get(url: str, *, tries: int = 3, backoff: float = 2.0, session=None,
     last = None
     for i in range(tries):
         try:
-            r = sess.get(url, headers=h, timeout=TIMEOUT)
+            r = sess.get(url, headers=h, timeout=timeout or TIMEOUT)
             if r.status_code != 200:
                 last = FetchError(f"HTTP {r.status_code} for {url}")
             else:
@@ -214,3 +216,52 @@ class DQ:
     @property
     def n_warns(self) -> int:
         return sum(1 for e in self.entries if e["level"] == "warn")
+
+
+# --------------------------------------------------------------------------
+# Run pacing.
+#
+# The first live run died on the job timeout with nothing committed, because the
+# full backfill (~300 forward-book months, each needing several URL probes, plus
+# years of weekly reserves) does not fit in one run. Two mechanisms fix that:
+# a per-source Deadline, and a per-run cap on NEW items. Backfill then completes
+# over consecutive daily runs instead of trying to finish in one.
+# --------------------------------------------------------------------------
+
+class Deadline:
+    """Soft time budget. Sources check .expired and stop fetching, keeping
+    whatever they already have rather than losing the run."""
+
+    def __init__(self, seconds: float):
+        self.seconds = seconds
+        self.t0 = time.monotonic()
+
+    @property
+    def elapsed(self) -> float:
+        return time.monotonic() - self.t0
+
+    @property
+    def remaining(self) -> float:
+        return max(0.0, self.seconds - self.elapsed)
+
+    @property
+    def expired(self) -> bool:
+        return self.remaining <= 0
+
+
+def pmap(fn, items, workers: int = 6):
+    """Thread-pooled map preserving input order. Exceptions are returned in
+    place of results rather than raised, so one bad item cannot abort a batch."""
+    from concurrent.futures import ThreadPoolExecutor
+    items = list(items)
+    if not items:
+        return []
+    with ThreadPoolExecutor(max_workers=min(workers, len(items))) as ex:
+        futs = [ex.submit(fn, it) for it in items]
+        out = []
+        for f in futs:
+            try:
+                out.append(f.result())
+            except Exception as e:  # noqa: BLE001
+                out.append(e)
+        return out

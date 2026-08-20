@@ -23,16 +23,25 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from sources import fred, india_misc, nsdl_fpi, rbi_forward_book, rbi_wss, rbihub
-from sources.common import DQ, LOGS, ROOT
+from sources.common import DQ, LOGS, ROOT, Deadline
 
+# name -> (module, description, time budget in seconds)
+#
+# Budgets exist because the first live run died on the job timeout with nothing
+# committed. Sources stop fetching when their budget is spent and keep what they
+# have; capped backfill then completes over consecutive daily runs. The global
+# budget is deliberately below the workflow step timeout so the commit step
+# always gets to run.
 SOURCES = {
-    "fred": (fred, "FRED — global/US spine, EM peers, DXY constituents"),
-    "rbi_forward_book": (rbi_forward_book, "RBI IRFCL — net forward book (highest value)"),
-    "rbi_wss": (rbi_wss, "RBI WSS — weekly FX reserves"),
-    "rbihub": (rbihub, "DBIE mirror — REER, forward premia, intervention, ECB"),
-    "nsdl_fpi": (nsdl_fpi, "NSDL — monthly FPI flows"),
-    "india_misc": (india_misc, "WPI, gold, NSE USD/INR option IV"),
+    "fred": (fred, "FRED — global/US, EM crosses, DXY constituents", 300),
+    "rbi_forward_book": (rbi_forward_book, "RBI IRFCL — net forward book", 420),
+    "rbi_wss": (rbi_wss, "RBI WSS — weekly FX reserves", 360),
+    "rbihub": (rbihub, "DBIE mirror — REER, forward premia, intervention, ECB", 180),
+    "nsdl_fpi": (nsdl_fpi, "NSDL — monthly FPI flows", 300),
+    "india_misc": (india_misc, "WPI, gold, NSE USD/INR option IV", 180),
 }
+
+GLOBAL_BUDGET_S = 1500   # 25 min; workflow step timeout is 30 min
 
 
 def main() -> int:
@@ -43,8 +52,8 @@ def main() -> int:
     args = ap.parse_args()
 
     if args.list:
-        for k, (_m, d) in SOURCES.items():
-            print(f"{k:20s} {d}")
+        for k, (_m, d, b) in SOURCES.items():
+            print(f"{k:20s} {b:>5}s  {d}")
         return 0
 
     names = args.only or [k for k in SOURCES if k not in args.skip]
@@ -56,16 +65,26 @@ def main() -> int:
     dq = DQ()
     started = datetime.now(timezone.utc)
     results: dict[str, dict] = {}
+    overall = Deadline(GLOBAL_BUDGET_S)
 
     for name in names:
-        mod, desc = SOURCES[name]
-        print(f"\n=== {name} :: {desc}", flush=True)
+        mod, desc, budget = SOURCES[name]
+        allowed = min(budget, overall.remaining)
+        print(f"\n=== {name} :: {desc}  [budget {allowed:.0f}s, "
+              f"{overall.remaining:.0f}s left overall]", flush=True)
+        if allowed <= 5:
+            results[name] = {"status": "skipped", "error": "out of time budget"}
+            dq.warn(name, "skipped: global time budget exhausted this run")
+            continue
+        t0 = overall.elapsed
         try:
-            results[name] = {"status": "ok", **(mod.run(dq) or {})}
+            results[name] = {"status": "ok",
+                             **(mod.run(dq, deadline=Deadline(allowed)) or {})}
         except Exception as e:  # noqa: BLE001
             results[name] = {"status": "failed", "error": f"{type(e).__name__}: {e}"}
             dq.error(name, f"source failed: {type(e).__name__}: {e}")
             traceback.print_exc()
+        results[name]["seconds"] = round(overall.elapsed - t0, 1)
 
     finished = datetime.now(timezone.utc)
     manifest = {
@@ -99,12 +118,15 @@ def _write_markdown(m: dict) -> None:
             bits = []
             if "series" in r:
                 bits.append(f"{len(r['series'])} series")
-            for k in ("n", "n_months", "n_weeks", "parsed", "last"):
+            for k in ("n", "n_months", "n_weeks", "parsed", "last",
+                      "backfill_remaining", "seconds"):
                 if k in r:
                     bits.append(f"{k}={r[k]}")
             if "files" in r and not bits:
                 bits.append(f"{len(r['files'])} files")
             L.append(f"| `{name}` | ok | {', '.join(bits) or '—'} |")
+        elif r["status"] == "skipped":
+            L.append(f"| `{name}` | skipped | {r.get('error','')} |")
         else:
             L.append(f"| `{name}` | **FAILED** | {r.get('error','')} |")
     errs = [e for e in m["dq"]["entries"] if e["level"] == "error"]

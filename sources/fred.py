@@ -11,7 +11,7 @@ from __future__ import annotations
 import csv
 import io
 
-from .common import DQ, FetchError, archive_raw, get, write_csv
+from .common import DQ, Deadline, FetchError, archive_raw, get, pmap, write_csv
 
 NAME = "fred"
 BASE = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={}"
@@ -60,13 +60,23 @@ SERIES = {
 FROZEN = {"DTWEXB", "INDCPIALLMINMEI"}
 
 
-def run(dq: DQ) -> dict:
+def run(dq: DQ, deadline: Deadline | None = None) -> dict:
     out = {"files": [], "series": {}}
-    for sid, (label, _why) in SERIES.items():
-        try:
-            body = get(BASE.format(sid))
-        except FetchError as e:
-            dq.error(NAME, f"{sid} ({label}) fetch failed: {e}")
+    ids = list(SERIES)
+
+    def _fetch(sid):
+        return sid, get(BASE.format(sid))
+
+    fetched = dict()
+    for res in pmap(_fetch, ids, workers=6):
+        if isinstance(res, Exception):
+            continue
+        fetched[res[0]] = res[1]
+    for sid in ids:
+        label, _why = SERIES[sid]
+        body = fetched.get(sid)
+        if body is None:
+            dq.error(NAME, f"{sid} ({label}) fetch failed")
             continue
         archive_raw(f"fred/{sid}.csv", body)
         try:

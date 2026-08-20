@@ -82,7 +82,7 @@ def _last_date(rows: list[dict]) -> str | None:
     return None
 
 
-def run(dq: DQ) -> dict:
+def run(dq: DQ, deadline=None) -> dict:
     out = {"files": [], "series": {}}
     for slug, (path, label, max_age) in SERIES.items():
         try:

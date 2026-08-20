@@ -22,7 +22,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -38,6 +38,10 @@ jobs:
 
       - name: Fetch
         id: fetch
+        # Step timeout is BELOW the job timeout on purpose. The first run died on
+        # the job timeout and the commit step never executed, so nothing was saved.
+        # Capping the step means a slow fetch is killed but the commit still runs.
+        timeout-minutes: 30
         continue-on-error: true          # commit partial results even on failure
         run: |
           if [ -n "${{ github.event.inputs.only }}" ]; then
@@ -47,6 +51,7 @@ jobs:
           fi
 
       - name: Commit
+        if: always()
         run: |
           git config user.name  "macro-data-bot"
           git config user.email "actions@users.noreply.github.com"
@@ -59,7 +64,7 @@ jobs:
           fi
 
       - name: Surface data-quality failures
-        if: steps.fetch.outcome == 'failure'
+        if: always() && steps.fetch.outcome != 'success'
         run: |
           echo "::error::Fetch reported data-quality errors. See MANIFEST.md."
           sed -n '1,60p' MANIFEST.md || true

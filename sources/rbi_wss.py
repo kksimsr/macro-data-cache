@@ -13,12 +13,13 @@ import re
 
 from bs4 import BeautifulSoup
 
-from .common import (DQ, FetchError, archive_raw, get, num, read_existing,
-                     write_csv)
+from .common import (DQ, Deadline, FetchError, archive_raw, get, num, pmap,
+                     read_existing, write_csv)
 
 NAME = "rbi_wss_reserves"
 INDEX = "https://www.rbi.org.in/Scripts/WSSViewDetail.aspx?TYPE=Section&PARAM1=2"
 DETAIL = "https://www.rbi.org.in/Scripts/BS_ViewWssExtractdetails.aspx?id={}"
+MAX_NEW_PER_RUN = 60   # weekly releases; backfill spreads over consecutive runs
 
 ID_RE = re.compile(r"[?&]id=(\d+)", re.I)
 DATE_RE = re.compile(r"(\d{1,2})\s+([A-Za-z]{3,9})\.?,?\s+(\d{4})")
@@ -71,7 +72,7 @@ def _reserves_from_html(html: bytes) -> dict:
     return out
 
 
-def run(dq: DQ) -> dict:
+def run(dq: DQ, deadline: Deadline | None = None) -> dict:
     try:
         idx = get(INDEX, expect="Foreign Exchange Reserves")
     except FetchError as e:
@@ -91,14 +92,23 @@ def run(dq: DQ) -> dict:
         raise FetchError("WSS index parsed to zero dated links — layout changed")
 
     existing = {r["week_ending"]: r for r in read_existing("rbi/fx_reserves_weekly.csv")}
-    todo = sorted(set(links) - set(existing))[-260:]  # cap backfill per run: ~5y
+    outstanding = sorted(set(links) - set(existing))
+    # Newest first: the current tail matters more than deep backfill.
+    todo = list(reversed(outstanding))[:MAX_NEW_PER_RUN]
+    remaining_after = len(outstanding) - len(todo)
+    if deadline and deadline.expired:
+        dq.warn(NAME, "skipped detail fetches: no time budget left this run")
+        todo = []
+
+    def _one(d):
+        return d, get(DETAIL.format(links[d]), tries=1)
+
     fetched = 0
-    for d in todo:
-        try:
-            html = get(DETAIL.format(links[d]), tries=2)
-        except FetchError as e:
-            dq.warn(NAME, f"{d}: detail fetch failed ({e})")
+    for res in pmap(_one, todo, workers=6):
+        if isinstance(res, Exception):
+            dq.warn(NAME, f"detail fetch failed ({res})")
             continue
+        d, html = res
         archive_raw(f"rbi/wss/{d}.html", html)
         vals = _reserves_from_html(html)
         if not vals:
@@ -117,8 +127,10 @@ def run(dq: DQ) -> dict:
               ["week_ending", "release_id", "total_reserves", "fca", "gold",
                "sdr", "imf_position"])
     dq.note(NAME, f"{len(ordered)} weeks on file ({fetched} new); "
-                  f"latest {ordered[-1]['week_ending']}")
+                  f"latest {ordered[-1]['week_ending']}; "
+                  f"~{max(0, remaining_after)} still to backfill")
     dq.note(NAME, "units are as published (US$ million); verify the column pick "
                   "against one release before trusting levels")
     return {"files": ["data/rbi/fx_reserves_weekly.csv"],
-            "n_weeks": len(ordered), "last": ordered[-1]["week_ending"]}
+            "n_weeks": len(ordered), "last": ordered[-1]["week_ending"],
+            "backfill_remaining": max(0, remaining_after)}
