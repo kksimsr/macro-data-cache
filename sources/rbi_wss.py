@@ -18,10 +18,11 @@ from .common import (DQ, Deadline, FetchError, archive_raw, get, num, pmap,
 
 NAME = "rbi_wss_reserves"
 INDEX = "https://www.rbi.org.in/Scripts/WSSViewDetail.aspx?TYPE=Section&PARAM1=2"
-DETAIL = "https://www.rbi.org.in/Scripts/BS_ViewWssExtractdetails.aspx?id={}"
+DETAIL = "https://www.rbi.org.in/Scripts/WSSView.aspx?Id={}"
 MAX_NEW_PER_RUN = 60   # weekly releases; backfill spreads over consecutive runs
 
-ID_RE = re.compile(r"[?&]id=(\d+)", re.I)
+ID_RE = re.compile(r"WSSView\.aspx\?Id=(\d+)", re.I)
+DATE_ONLY_RE = re.compile(r"^\d{1,2}\s+[A-Za-z]{3,9}\.?,?\s+20\d\d$")
 DATE_RE = re.compile(r"(\d{1,2})\s+([A-Za-z]{3,9})\.?,?\s+(\d{4})")
 MONTHS = {m.lower(): i for i, m in enumerate(
     ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -80,14 +81,21 @@ def run(dq: DQ, deadline: Deadline | None = None) -> dict:
     archive_raw("rbi/wss/index.html", idx)
 
     soup = BeautifulSoup(idx, "lxml")
+    # Layout (confirmed from the archived index, not assumed): the release date
+    # sits in its own single-cell row, and the link row that FOLLOWS it is that
+    # release. Every anchor's text is the literal string "Foreign Exchange
+    # Reserves", so reading the date off the anchor — as the first version did —
+    # yields zero dated links.
     links: dict[str, str] = {}
-    for a in soup.find_all("a", href=True):
-        m = ID_RE.search(a["href"])
-        if not m:
+    current: str | None = None
+    for tr in soup.find_all("tr"):
+        cells = [c.get_text(" ", strip=True) for c in tr.find_all(["td", "th"])]
+        if len(cells) == 1 and DATE_ONLY_RE.match(cells[0]):
+            current = _parse_date(cells[0])
             continue
-        d = _parse_date(a.get_text(" ", strip=True))
-        if d:
-            links[d] = m.group(1)
+        a = tr.find("a", href=ID_RE)
+        if a is not None and current:
+            links[current] = ID_RE.search(a["href"]).group(1)
     if not links:
         raise FetchError("WSS index parsed to zero dated links — layout changed")
 

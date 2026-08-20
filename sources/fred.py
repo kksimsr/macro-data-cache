@@ -15,6 +15,7 @@ from .common import DQ, Deadline, FetchError, archive_raw, get, pmap, write_csv
 
 NAME = "fred"
 BASE = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={}"
+ALT = "https://fred.stlouisfed.org/data/{}.txt"   # fallback if fredgraph blocks
 
 # id -> (label, why it is here)
 SERIES = {
@@ -65,18 +66,31 @@ def run(dq: DQ, deadline: Deadline | None = None) -> dict:
     ids = list(SERIES)
 
     def _fetch(sid):
-        return sid, get(BASE.format(sid))
+        # The first live run failed on every single series from a GitHub Actions
+        # runner, so try the alternate endpoint before giving up and record the
+        # ACTUAL error rather than a generic message.
+        errs = []
+        for url in (BASE.format(sid), ALT.format(sid)):
+            try:
+                return sid, get(url, tries=2), None
+            except Exception as e:  # noqa: BLE001
+                errs.append(f"{url.split('/')[3]}: {e}")
+        return sid, None, " | ".join(errs)
 
-    fetched = dict()
+    fetched, errors = {}, {}
     for res in pmap(_fetch, ids, workers=6):
         if isinstance(res, Exception):
             continue
-        fetched[res[0]] = res[1]
+        sid, body, err = res
+        if body is None:
+            errors[sid] = err
+        else:
+            fetched[sid] = body
     for sid in ids:
         label, _why = SERIES[sid]
         body = fetched.get(sid)
         if body is None:
-            dq.error(NAME, f"{sid} ({label}) fetch failed")
+            dq.error(NAME, f"{sid} ({label}) fetch failed -> {errors.get(sid)}")
             continue
         archive_raw(f"fred/{sid}.csv", body)
         try:
@@ -109,6 +123,7 @@ def run(dq: DQ, deadline: Deadline | None = None) -> dict:
         except Exception as e:  # noqa: BLE001
             dq.error(NAME, f"{sid} parse failed: {e}")
     if not out["series"]:
-        raise FetchError("FRED returned nothing at all — likely a network/egress problem")
+        raise FetchError("FRED returned nothing at all. First error was: "
+                         f"{next(iter(errors.values()), 'unknown')}")
     dq.note(NAME, f"{len(out['series'])}/{len(SERIES)} series written")
     return out
