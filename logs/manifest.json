@@ -1,28 +1,33 @@
 {
-  "run_started_utc": "2026-08-20T10:45:13+00:00",
-  "run_finished_utc": "2026-08-20T10:51:27+00:00",
-  "duration_s": 373.6,
+  "run_started_utc": "2026-08-20T11:02:18+00:00",
+  "run_finished_utc": "2026-08-20T11:10:13+00:00",
+  "duration_s": 475.8,
   "sources": {
     "fred": {
       "status": "failed",
-      "error": "FetchError: FRED returned nothing at all \u2014 likely a network/egress problem",
-      "seconds": 332.2
+      "error": "FetchError: FRED returned nothing at all. First error was: graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)",
+      "seconds": 422.2
     },
     "rbi_forward_book": {
       "status": "ok",
       "files": [
         "data/rbi/forward_book.csv"
       ],
-      "n_months": 36,
-      "parsed": 32,
+      "n_months": 34,
+      "parsed": 34,
       "backfill_remaining": 267,
-      "last": "2026-08",
-      "seconds": 12.9
+      "last": "2026-06",
+      "seconds": 8.4
     },
     "rbi_wss": {
-      "status": "failed",
-      "error": "FetchError: WSS index parsed to zero dated links \u2014 layout changed",
-      "seconds": 9.2
+      "status": "ok",
+      "files": [
+        "data/rbi/fx_reserves_weekly.csv"
+      ],
+      "n_weeks": 60,
+      "last": "2026-08-14",
+      "backfill_remaining": 1329,
+      "seconds": 22.7
     },
     "rbihub": {
       "status": "ok",
@@ -54,7 +59,7 @@
           "last": "Sep"
         }
       },
-      "seconds": 1.7
+      "seconds": 1.5
     },
     "nsdl_fpi": {
       "status": "ok",
@@ -63,7 +68,7 @@
       ],
       "n": 8,
       "last": "2026-08",
-      "seconds": 12.7
+      "seconds": 16.7
     },
     "india_misc": {
       "status": "ok",
@@ -73,202 +78,182 @@
         "data/global/gold_monthly.csv",
         "data/india/usdinr_option_iv_log.csv"
       ],
-      "seconds": 5.0
+      "seconds": 4.3
     }
   },
   "dq": {
-    "errors": 32,
-    "warnings": 12,
+    "errors": 31,
+    "warnings": 8,
     "entries": [
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXINUS (USD/INR spot, daily) fetch failed"
+        "msg": "DEXINUS (USD/INR spot, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DTWEXBGS (Broad USD index, daily) fetch failed"
+        "msg": "DTWEXBGS (Broad USD index, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DTWEXB (Broad USD index (legacy, ends 2019-12)) fetch failed"
+        "msg": "DTWEXB (Broad USD index (legacy, ends 2019-12)) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DGS10 (US 10y CMT, daily) fetch failed"
+        "msg": "DGS10 (US 10y CMT, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DFII10 (US 10y TIPS real, daily) fetch failed"
+        "msg": "DFII10 (US 10y TIPS real, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DGS2 (US 2y CMT, daily) fetch failed"
+        "msg": "DGS2 (US 2y CMT, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DFF (Fed funds effective, daily) fetch failed"
+        "msg": "DFF (Fed funds effective, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "VIXCLS (VIX close, daily) fetch failed"
+        "msg": "VIXCLS (VIX close, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "BAMLEMCBPIOAS (EM corporate OAS, daily) fetch failed"
+        "msg": "BAMLEMCBPIOAS (EM corporate OAS, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "CPIAUCSL (US CPI SA, monthly) fetch failed"
+        "msg": "CPIAUCSL (US CPI SA, monthly) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DCOILBRENTEU (Brent, daily) fetch failed"
+        "msg": "DCOILBRENTEU (Brent, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DCOILWTICO (WTI, daily) fetch failed"
+        "msg": "DCOILWTICO (WTI, daily) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "RBINBIS (BIS real broad EER India, monthly) fetch failed"
+        "msg": "RBINBIS (BIS real broad EER India, monthly) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "TRESEGINM052N (India reserves excl gold, monthly) fetch failed"
+        "msg": "TRESEGINM052N (India reserves excl gold, monthly) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "INDCPIALLMINMEI (India CPI (OECD) \u2014 STALE ~2025-03) fetch failed"
+        "msg": "INDCPIALLMINMEI (India CPI (OECD) \u2014 STALE ~2025-03) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXCHUS (CNY/USD) fetch failed"
+        "msg": "DEXCHUS (CNY/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXKOUS (KRW/USD) fetch failed"
+        "msg": "DEXKOUS (KRW/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXTAUS (TWD/USD) fetch failed"
+        "msg": "DEXTAUS (TWD/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXSIUS (SGD/USD) fetch failed"
+        "msg": "DEXSIUS (SGD/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXTHUS (THB/USD) fetch failed"
+        "msg": "DEXTHUS (THB/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXMAUS (MYR/USD) fetch failed"
+        "msg": "DEXMAUS (MYR/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXBZUS (BRL/USD) fetch failed"
+        "msg": "DEXBZUS (BRL/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXMXUS (MXN/USD) fetch failed"
+        "msg": "DEXMXUS (MXN/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXSFUS (ZAR/USD) fetch failed"
+        "msg": "DEXSFUS (ZAR/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXUSEU (USD/EUR) fetch failed"
+        "msg": "DEXUSEU (USD/EUR) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXJPUS (JPY/USD) fetch failed"
+        "msg": "DEXJPUS (JPY/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXUSUK (USD/GBP) fetch failed"
+        "msg": "DEXUSUK (USD/GBP) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXCAUS (CAD/USD) fetch failed"
+        "msg": "DEXCAUS (CAD/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXSDUS (SEK/USD) fetch failed"
+        "msg": "DEXSDUS (SEK/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "DEXSZUS (CHF/USD) fetch failed"
+        "msg": "DEXSZUS (CHF/USD) fetch failed -> graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "error",
         "source": "fred",
-        "msg": "source failed: FetchError: FRED returned nothing at all \u2014 likely a network/egress problem"
-      },
-      {
-        "level": "warn",
-        "source": "rbi_forward_book",
-        "msg": "2026-08: forward short position not parsed (raw archived)"
-      },
-      {
-        "level": "warn",
-        "source": "rbi_forward_book",
-        "msg": "2026-07: forward short position not parsed (raw archived)"
-      },
-      {
-        "level": "warn",
-        "source": "rbi_forward_book",
-        "msg": "2026-02: forward short position not parsed (raw archived)"
-      },
-      {
-        "level": "warn",
-        "source": "rbi_forward_book",
-        "msg": "2025-02: forward short position not parsed (raw archived)"
+        "msg": "source failed: FetchError: FRED returned nothing at all. First error was: graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "note",
         "source": "rbi_forward_book",
-        "msg": "36 months on file, 36 fetched, 0 missed, 32 parsed, ~267 months still to backfill"
+        "msg": "34 months on file, 34 fetched, 2 missed, 34 parsed, ~267 left to backfill"
       },
       {
         "level": "note",
-        "source": "rbi_forward_book",
-        "msg": "backfill continues on the next scheduled run"
+        "source": "rbi_wss_reserves",
+        "msg": "60 weeks on file (60 new); latest 2026-08-14; ~1329 still to backfill"
       },
       {
-        "level": "error",
-        "source": "rbi_wss",
-        "msg": "source failed: FetchError: WSS index parsed to zero dated links \u2014 layout changed"
+        "level": "note",
+        "source": "rbi_wss_reserves",
+        "msg": "units are as published (US$ million); verify the column pick against one release before trusting levels"
       },
       {
         "level": "warn",
@@ -333,7 +318,7 @@
       {
         "level": "note",
         "source": "nsdl_fpi",
-        "msg": "8 months on file, units Rs crore; ~19 years still to backfill"
+        "msg": "8 months on file, units Rs crore; ~18 years still to backfill"
       },
       {
         "level": "note",
