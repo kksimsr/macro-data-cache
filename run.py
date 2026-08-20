@@ -122,7 +122,10 @@ def _persist(started, results: dict, dq: DQ) -> None:
             prior = (json.loads(f.read_text()) or {}).get("sources", {})
         except (json.JSONDecodeError, OSError):
             prior = {}
-    merged = {**prior, **results}
+    # Drop records for sources that no longer exist. `fred` was replaced by
+    # `market`, but the merge kept resurrecting its run-2 FAILED row, so the
+    # manifest reported a failure from a module that is no longer in the repo.
+    merged = {k: v for k, v in {**prior, **results}.items() if k in SOURCES}
     m = {
         "run_started_utc": started.isoformat(timespec="seconds"),
         "run_finished_utc": now.isoformat(timespec="seconds"),

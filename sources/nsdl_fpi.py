@@ -210,13 +210,19 @@ def run(dq: DQ, deadline: Deadline | None = None) -> dict:
             payload["__EVENTTARGET"] = sel["name"]
             payload["__EVENTARGUMENT"] = ""
             page = None
-            for attempt in range(3):
+            # One retry, not three. The server refuses these postbacks outright
+            # (RemoteDisconnected on every historical year across three runs), so
+            # extra attempts just burn the budget. Backfill needs a different
+            # mechanism; the current year — the part that actually moves — works.
+            for attempt in range(2):
                 try:
                     page = _post(sess, payload, URL)
                     break
                 except Exception as e:            # noqa: BLE001
-                    if attempt == 2:
-                        dq.warn(NAME, f"{y}: postback failed after 3 tries ({e})")
+                    if attempt == 1:
+                        dq.warn(NAME, f"{y}: postback refused ({type(e).__name__}) "
+                                      f"— historical backfill needs a browser; the "
+                                      f"current year is unaffected")
                     else:                         # rebuild the session and retry
                         sess = requests.Session()
                         try:

@@ -55,6 +55,8 @@ START = date(2001, 6, 1)
 MAX_NEW_PER_RUN = 36
 MAX_PROBE_ATTEMPTS = 3
 RECENT_MONTHS = 6
+# Below this the forward book routinely crosses zero and ratio checks are noise.
+MATERIAL_BOOK_USD_MN = 20000
 
 MONTHS = ["January", "February", "March", "April", "May", "June", "July",
           "August", "September", "October", "November", "December"]
@@ -335,12 +337,17 @@ def _sanity(dq: DQ, ordered: list[dict]) -> None:
         if net is None:
             prev_ref, prev_net = ref, None
             continue
-        if prev_net is not None and abs(prev_net) > 5000:
-            # Month-on-month the book moves by billions, not orders of magnitude.
+        # SCALE GATE. Through 2023-24 the book legitimately oscillated through
+        # zero (Dec-2023: short -8,450 against long +10,634, net -2,184), so a
+        # "75% collapse" there is noise, not a parse error — both errors raised on
+        # run 3 were false positives of exactly this kind. Only police the ratio
+        # once the book is materially large, which is the regime the wrong-cell
+        # bug lived in (prev ~50,000, reported 1,366 — still caught).
+        if prev_net is not None and abs(prev_net) >= MATERIAL_BOOK_USD_MN:
             if abs(net) < abs(prev_net) * 0.25:
                 dq.error(NAME, f"{ref}: net short {net:,.0f} is a >75% collapse from "
                                f"{prev_ref} ({prev_net:,.0f}) — suspect wrong cell")
-            elif (net > 0) != (prev_net > 0) and abs(net) > 5000:
+            elif (net > 0) != (prev_net > 0) and abs(net) >= MATERIAL_BOOK_USD_MN:
                 dq.error(NAME, f"{ref}: net position flipped sign vs {prev_ref} "
                                f"({prev_net:,.0f} -> {net:,.0f}) — verify, do not assume")
         prev_ref, prev_net = ref, net

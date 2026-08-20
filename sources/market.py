@@ -29,13 +29,14 @@ import io
 from datetime import date
 
 from .common import (DQ, Deadline, FetchError, archive_raw, get,
-                     guard_regression, num, pmap, write_csv)
+                     guard_regression, num, pmap, read_existing, write_csv)
 
 NAME = "market"
 
 RAW = "https://raw.githubusercontent.com/datasets/{}"
 FRED_CSV = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={}"
 FRED_TXT = "https://fred.stlouisfed.org/data/{}.txt"
+FRED_TIMEOUT = 20
 
 # ---------------------------------------------------------------- tier 1
 FX_LONG = RAW.format("exchange-rates/main/data/daily.csv")
@@ -92,6 +93,15 @@ FRED_ONLY = {
 
 # Without this the whole exercise is pointless, so its absence is fatal.
 CRITICAL = "INR"
+
+# FRED CIRCUIT BREAKER. Every FRED series has timed out from the runner on three
+# consecutive runs, costing 364s of a 330s budget to fetch nothing. Once it has
+# failed twice in a row we stop attempting all eight and send a single canary
+# instead; if the canary gets through, the next run resumes the full set. This
+# keeps checking without paying six minutes a day for a host that is down for us.
+HEALTH = "_fred_health.csv"
+CANARY = "DGS10"
+BREAKER_AFTER = 2
 
 
 def _parse_series(body: bytes, col: str | None) -> list[dict]:
@@ -211,6 +221,18 @@ def run(dq: DQ, deadline: Deadline | None = None) -> dict:
     # Generous timeout and low concurrency: the failure mode observed on the
     # runner is a slow read, not a refusal, and hammering it in parallel made it
     # worse. A miss here is a coverage gap, not a broken run.
+    fails = 0
+    for r in read_existing(HEALTH):
+        try:
+            fails = int(r.get("consecutive_failures") or 0)
+        except ValueError:
+            fails = 0
+    targets = list(FRED_ONLY)
+    if fails >= BREAKER_AFTER:
+        targets = [CANARY]
+        dq.note(NAME, f"FRED circuit breaker open after {fails} failed runs — "
+                      f"probing {CANARY} only; full set resumes when it responds")
+
     budget_left = deadline.remaining if deadline else 240
     if budget_left < 45:
         for sid, label in FRED_ONLY.items():
@@ -219,17 +241,18 @@ def run(dq: DQ, deadline: Deadline | None = None) -> dict:
         return _finish(dq, out)
 
     def _fred(sid):
-        if deadline and deadline.expired:
-            return sid, None, "out of time budget"
         errs = []
         for url in (FRED_CSV.format(sid), FRED_TXT.format(sid)):
+            if deadline and deadline.expired:
+                return sid, None, "out of time budget"
             try:
-                return sid, get(url, tries=1, timeout=45), None
+                return sid, get(url, tries=1, timeout=FRED_TIMEOUT), None
             except Exception as e:  # noqa: BLE001
                 errs.append(str(e)[:120])
         return sid, None, " | ".join(errs)
 
-    for res in pmap(_fred, list(FRED_ONLY), workers=2):
+    got_any = False
+    for res in pmap(_fred, targets, workers=2):
         if isinstance(res, Exception):
             continue
         sid, body, err = res
@@ -238,6 +261,7 @@ def run(dq: DQ, deadline: Deadline | None = None) -> dict:
             out["gaps"].append(sid)
             dq.warn(NAME, f"{sid} ({label}) unavailable from FRED: {err}")
             continue
+        got_any = True
         archive_raw(f"fred/{sid}.csv", body)
         try:
             txt = body.decode("utf-8", "replace")
@@ -258,6 +282,13 @@ def run(dq: DQ, deadline: Deadline | None = None) -> dict:
             out["gaps"].append(sid)
             dq.warn(NAME, f"{sid} parse failed: {e}")
 
+    # Any success resets the breaker; a clean sweep of failures advances it.
+    new_fails = 0 if got_any else fails + 1
+    write_csv(HEALTH, [{"consecutive_failures": new_fails,
+                        "note": "0 = healthy; >=2 opens the circuit breaker"}],
+              ["consecutive_failures", "note"])
+    if targets != list(FRED_ONLY):
+        out["gaps"] = [g for g in FRED_ONLY if g not in out["series"]]
     return _finish(dq, out)
 
 
