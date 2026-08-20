@@ -1,40 +1,27 @@
 # Data manifest
 
-Last run: **2026-08-20T12:28:21+00:00** · 461.4s · 2 errors, 16 warnings
+Last run: **2026-08-20T12:44:14+00:00** · 124.2s · 0 errors, 9 warnings
 
 | source | status | detail |
 |---|---|---|
-| `fred` | **FAILED** | FetchError: FRED returned nothing at all. First error was: graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) |
-| `rbi_forward_book` | ok | n_months=63, parsed=63, last=2026-06, backfill_remaining=237, seconds=28.1 |
-| `rbi_wss` | ok | n_weeks=60, last=2026-08-07, backfill_remaining=1329, seconds=23.1 |
-| `rbihub` | ok | 4 series, seconds=1.4 |
-| `nsdl_fpi` | ok | n=8, last=2026-08, backfill_remaining=19, seconds=37.8 |
-| `india_misc` | ok | seconds=6.7 |
-| `market` | ok | 27 series, seconds=364.3 |
-
-## Errors
-
-- **rbi_forward_book** — 2023-12: net short -2,184 is a >75% collapse from 2023-11 (11,901) — suspect wrong cell
-- **rbi_forward_book** — 2024-03: net short 541 is a >75% collapse from 2024-02 (-9,694) — suspect wrong cell
+| `rbi_forward_book` | ok | n_months=92, parsed=92, last=2026-06, backfill_remaining=208, seconds=26.6 |
+| `rbi_wss` | ok | n_weeks=120, last=2026-08-07, backfill_remaining=1269, seconds=18.0 |
+| `rbihub` | ok | 4 series, seconds=1.6 |
+| `nsdl_fpi` | ok | n=8, last=2026-08, backfill_remaining=19, seconds=29.9 |
+| `india_misc` | ok | seconds=4.5 |
+| `market` | ok | 27 series, seconds=43.5 |
 
 ## Warnings
 
-- *market* — DGS10 (US 10y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)
-- *market* — DGS2 (US 2y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)
-- *market* — DFII10 (US 10y TIPS real, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)
-- *market* — DFF (Fed funds effective, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)
-- *market* — DTWEXBGS (Broad USD index, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)
-- *market* — BAMLEMCBPIOAS (EM corporate OAS, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)
-- *market* — TRESEGINM052N (India reserves excl gold, monthly (IMF IFS)) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)
-- *market* — RBINBIS (BIS real broad EER, India, monthly) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)
+- *market* — DGS10 (US 10y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)
 - *market* — coverage gaps (8): DGS10, DGS2, DFII10, DFF, DTWEXBGS, BAMLEMCBPIOAS, TRESEGINM052N, RBINBIS — FRED-only series, no mirror exists; retried next run
 - *rbihub* — sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (141d) — mirror lag, patch the tail from another route
 - *rbihub* — sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (141d) — mirror lag, patch the tail from another route
-- *nsdl_fpi* — 2021: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))
-- *nsdl_fpi* — 2022: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))
-- *nsdl_fpi* — 2023: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))
-- *nsdl_fpi* — 2024: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))
-- *nsdl_fpi* — 2025: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))
+- *nsdl_fpi* — 2021: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
+- *nsdl_fpi* — 2022: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
+- *nsdl_fpi* — 2023: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
+- *nsdl_fpi* — 2024: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
+- *nsdl_fpi* — 2025: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
 
 ## Coverage gaps
 

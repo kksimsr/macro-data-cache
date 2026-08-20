@@ -1,33 +1,28 @@
 {
-  "run_started_utc": "2026-08-20T12:20:40+00:00",
-  "run_finished_utc": "2026-08-20T12:28:21+00:00",
-  "duration_s": 461.4,
+  "run_started_utc": "2026-08-20T12:42:10+00:00",
+  "run_finished_utc": "2026-08-20T12:44:14+00:00",
+  "duration_s": 124.2,
   "sources": {
-    "fred": {
-      "status": "failed",
-      "error": "FetchError: FRED returned nothing at all. First error was: graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)",
-      "seconds": 422.2
-    },
     "rbi_forward_book": {
       "status": "ok",
       "files": [
         "data/rbi/forward_book.csv"
       ],
-      "n_months": 63,
-      "parsed": 63,
-      "backfill_remaining": 237,
+      "n_months": 92,
+      "parsed": 92,
+      "backfill_remaining": 208,
       "last": "2026-06",
-      "seconds": 28.1
+      "seconds": 26.6
     },
     "rbi_wss": {
       "status": "ok",
       "files": [
         "data/rbi/fx_reserves_weekly.csv"
       ],
-      "n_weeks": 60,
+      "n_weeks": 120,
       "last": "2026-08-07",
-      "backfill_remaining": 1329,
-      "seconds": 23.1
+      "backfill_remaining": 1269,
+      "seconds": 18.0
     },
     "rbihub": {
       "status": "ok",
@@ -59,7 +54,7 @@
           "last": "Sep"
         }
       },
-      "seconds": 1.4
+      "seconds": 1.6
     },
     "nsdl_fpi": {
       "status": "ok",
@@ -69,7 +64,7 @@
       "n": 8,
       "last": "2026-08",
       "backfill_remaining": 19,
-      "seconds": 37.8
+      "seconds": 29.9
     },
     "india_misc": {
       "status": "ok",
@@ -78,7 +73,7 @@
         "raw/wpi/wpi_monthly_index_202608.xlsx.gz",
         "raw/wpi/monthly_index_202607.xls.gz"
       ],
-      "seconds": 6.7
+      "seconds": 4.5
     },
     "market": {
       "status": "ok",
@@ -285,12 +280,12 @@
         "TRESEGINM052N",
         "RBINBIS"
       ],
-      "seconds": 364.3
+      "seconds": 43.5
     }
   },
   "dq": {
-    "errors": 2,
-    "warnings": 16,
+    "errors": 0,
+    "warnings": 9,
     "entries": [
       {
         "level": "note",
@@ -313,44 +308,14 @@
         "msg": "FX mirror: 21 currencies; INR 13439 obs to 2026-08-14"
       },
       {
-        "level": "warn",
+        "level": "note",
         "source": "market",
-        "msg": "DGS10 (US 10y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
+        "msg": "FRED circuit breaker open after 4 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
         "source": "market",
-        "msg": "DGS2 (US 2y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
-      },
-      {
-        "level": "warn",
-        "source": "market",
-        "msg": "DFII10 (US 10y TIPS real, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
-      },
-      {
-        "level": "warn",
-        "source": "market",
-        "msg": "DFF (Fed funds effective, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
-      },
-      {
-        "level": "warn",
-        "source": "market",
-        "msg": "DTWEXBGS (Broad USD index, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
-      },
-      {
-        "level": "warn",
-        "source": "market",
-        "msg": "BAMLEMCBPIOAS (EM corporate OAS, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
-      },
-      {
-        "level": "warn",
-        "source": "market",
-        "msg": "TRESEGINM052N (India reserves excl gold, monthly (IMF IFS)) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
-      },
-      {
-        "level": "warn",
-        "source": "market",
-        "msg": "RBINBIS (BIS real broad EER, India, monthly) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
+        "msg": "DGS10 (US 10y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "warn",
@@ -363,24 +328,14 @@
         "msg": "27 series written, 8 gaps"
       },
       {
-        "level": "error",
-        "source": "rbi_forward_book",
-        "msg": "2023-12: net short -2,184 is a >75% collapse from 2023-11 (11,901) \u2014 suspect wrong cell"
-      },
-      {
-        "level": "error",
-        "source": "rbi_forward_book",
-        "msg": "2024-03: net short 541 is a >75% collapse from 2024-02 (-9,694) \u2014 suspect wrong cell"
-      },
-      {
         "level": "note",
         "source": "rbi_forward_book",
-        "msg": "63 months on file, 33 fetched, 3 missed, 63 parsed, ~237 left to backfill"
+        "msg": "92 months on file, 33 fetched, 3 missed, 92 parsed, ~208 left to backfill"
       },
       {
         "level": "note",
         "source": "rbi_wss_reserves",
-        "msg": "60 weeks (units US$ mn, dated by as-on not publication); 60 new; ~1329 to backfill"
+        "msg": "120 weeks (units US$ mn, dated by as-on not publication); 60 new; ~1269 to backfill"
       },
       {
         "level": "warn",
@@ -415,27 +370,27 @@
       {
         "level": "warn",
         "source": "nsdl_fpi",
-        "msg": "2021: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
+        "msg": "2021: postback refused (ConnectionError) \u2014 historical backfill needs a browser; the current year is unaffected"
       },
       {
         "level": "warn",
         "source": "nsdl_fpi",
-        "msg": "2022: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
+        "msg": "2022: postback refused (ConnectionError) \u2014 historical backfill needs a browser; the current year is unaffected"
       },
       {
         "level": "warn",
         "source": "nsdl_fpi",
-        "msg": "2023: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
+        "msg": "2023: postback refused (ConnectionError) \u2014 historical backfill needs a browser; the current year is unaffected"
       },
       {
         "level": "warn",
         "source": "nsdl_fpi",
-        "msg": "2024: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
+        "msg": "2024: postback refused (ConnectionError) \u2014 historical backfill needs a browser; the current year is unaffected"
       },
       {
         "level": "warn",
         "source": "nsdl_fpi",
-        "msg": "2025: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
+        "msg": "2025: postback refused (ConnectionError) \u2014 historical backfill needs a browser; the current year is unaffected"
       },
       {
         "level": "note",
