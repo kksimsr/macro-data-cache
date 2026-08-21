@@ -1,28 +1,28 @@
 {
-  "run_started_utc": "2026-08-20T12:42:10+00:00",
-  "run_finished_utc": "2026-08-20T12:44:14+00:00",
-  "duration_s": 124.2,
+  "run_started_utc": "2026-08-21T03:29:43+00:00",
+  "run_finished_utc": "2026-08-21T03:31:52+00:00",
+  "duration_s": 129.1,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
       "files": [
         "data/rbi/forward_book.csv"
       ],
-      "n_months": 92,
-      "parsed": 92,
-      "backfill_remaining": 208,
+      "n_months": 119,
+      "parsed": 114,
+      "backfill_remaining": 179,
       "last": "2026-06",
-      "seconds": 26.6
+      "seconds": 27.3
     },
     "rbi_wss": {
       "status": "ok",
       "files": [
         "data/rbi/fx_reserves_weekly.csv"
       ],
-      "n_weeks": 120,
+      "n_weeks": 180,
       "last": "2026-08-07",
-      "backfill_remaining": 1269,
-      "seconds": 18.0
+      "backfill_remaining": 1209,
+      "seconds": 23.8
     },
     "rbihub": {
       "status": "ok",
@@ -57,14 +57,9 @@
       "seconds": 1.6
     },
     "nsdl_fpi": {
-      "status": "ok",
-      "files": [
-        "data/india/fpi_flows_monthly.csv"
-      ],
-      "n": 8,
-      "last": "2026-08",
-      "backfill_remaining": 19,
-      "seconds": 29.9
+      "status": "failed",
+      "error": "FetchError: NSDL unreachable: HTTPSConnectionPool(host='www.fpi.nsdl.co.in', port=443): Max retries exceeded with url: /web/Reports/Yearwise.aspx?RptType=6 (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.fpi.nsdl.co.in', port=443) at 0x7eff49c21490>, 'Connection to www.fpi.nsdl.co.in timed out. (connect timeout=5)'))",
+      "seconds": 27.3
     },
     "india_misc": {
       "status": "ok",
@@ -73,7 +68,7 @@
         "raw/wpi/wpi_monthly_index_202608.xlsx.gz",
         "raw/wpi/monthly_index_202607.xls.gz"
       ],
-      "seconds": 4.5
+      "seconds": 4.9
     },
     "market": {
       "status": "ok",
@@ -247,9 +242,9 @@
         },
         "vix_daily": {
           "label": "VIX close, daily",
-          "n": 9253,
+          "n": 9254,
           "first": "1990-01-02",
-          "last": "2026-08-18"
+          "last": "2026-08-19"
         },
         "gold_monthly": {
           "label": "Gold USD/oz, monthly",
@@ -280,17 +275,17 @@
         "TRESEGINM052N",
         "RBINBIS"
       ],
-      "seconds": 43.5
+      "seconds": 44.1
     }
   },
   "dq": {
-    "errors": 0,
-    "warnings": 9,
+    "errors": 1,
+    "warnings": 10,
     "entries": [
       {
         "level": "note",
         "source": "india_misc",
-        "msg": "NSE IV: 13 strike-legs captured, 11 with open interest"
+        "msg": "NSE IV: 1538 strike-legs captured, 11 with open interest"
       },
       {
         "level": "note",
@@ -310,7 +305,7 @@
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 4 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 5 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -328,19 +323,49 @@
         "msg": "27 series written, 8 gaps"
       },
       {
+        "level": "warn",
+        "source": "rbi_forward_book",
+        "msg": "2016-10: short-position total not found (raw archived)"
+      },
+      {
+        "level": "warn",
+        "source": "rbi_forward_book",
+        "msg": "2016-09: short-position total not found (raw archived)"
+      },
+      {
+        "level": "warn",
+        "source": "rbi_forward_book",
+        "msg": "2016-08: short-position total not found (raw archived)"
+      },
+      {
+        "level": "warn",
+        "source": "rbi_forward_book",
+        "msg": "2016-07: short-position total not found (raw archived)"
+      },
+      {
+        "level": "warn",
+        "source": "rbi_forward_book",
+        "msg": "2016-05: short-position total not found (raw archived)"
+      },
+      {
+        "level": "warn",
+        "source": "rbi_forward_book",
+        "msg": "1 months given up on after 3 confirmed-absent probes: 2023-03"
+      },
+      {
         "level": "note",
         "source": "rbi_forward_book",
-        "msg": "92 months on file, 33 fetched, 3 missed, 92 parsed, ~208 left to backfill"
+        "msg": "119 months on file, 31 fetched, 5 missed, 114 parsed, ~179 left to backfill"
       },
       {
         "level": "note",
         "source": "rbi_wss_reserves",
-        "msg": "120 weeks (units US$ mn, dated by as-on not publication); 60 new; ~1269 to backfill"
+        "msg": "180 weeks (units US$ mn, dated by as-on not publication); 60 new; ~1209 to backfill"
       },
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (141d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (142d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -350,7 +375,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (141d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (142d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -368,39 +393,9 @@
         "msg": "external-commercial-borrowings: 82 rows, last Sep"
       },
       {
-        "level": "warn",
+        "level": "error",
         "source": "nsdl_fpi",
-        "msg": "2021: postback refused (ConnectionError) \u2014 historical backfill needs a browser; the current year is unaffected"
-      },
-      {
-        "level": "warn",
-        "source": "nsdl_fpi",
-        "msg": "2022: postback refused (ConnectionError) \u2014 historical backfill needs a browser; the current year is unaffected"
-      },
-      {
-        "level": "warn",
-        "source": "nsdl_fpi",
-        "msg": "2023: postback refused (ConnectionError) \u2014 historical backfill needs a browser; the current year is unaffected"
-      },
-      {
-        "level": "warn",
-        "source": "nsdl_fpi",
-        "msg": "2024: postback refused (ConnectionError) \u2014 historical backfill needs a browser; the current year is unaffected"
-      },
-      {
-        "level": "warn",
-        "source": "nsdl_fpi",
-        "msg": "2025: postback refused (ConnectionError) \u2014 historical backfill needs a browser; the current year is unaffected"
-      },
-      {
-        "level": "note",
-        "source": "nsdl_fpi",
-        "msg": "column mapping reconciles in 7/7 months"
-      },
-      {
-        "level": "note",
-        "source": "nsdl_fpi",
-        "msg": "8 months on file (units: INR crore); ~19 years still to backfill"
+        "msg": "source failed: FetchError: NSDL unreachable: HTTPSConnectionPool(host='www.fpi.nsdl.co.in', port=443): Max retries exceeded with url: /web/Reports/Yearwise.aspx?RptType=6 (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.fpi.nsdl.co.in', port=443) at 0x7eff49c21490>, 'Connection to www.fpi.nsdl.co.in timed out. (connect timeout=5)'))"
       }
     ]
   }
