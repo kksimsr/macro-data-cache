@@ -54,6 +54,13 @@ START = date(2001, 6, 1)
 
 MAX_NEW_PER_RUN = 36
 MAX_PROBE_ATTEMPTS = 3
+# Bump when the parsing logic changes. Months that are on file WITHOUT a forward
+# book and were written by an older parser get their retry counter forgiven, so a
+# layout the parser has just learned to read is re-attempted instead of staying
+# abandoned. Rows that already parsed are never refetched on a bump — that would
+# spend the whole run's budget re-reading pages we can already read.
+#   v1 -> v2: learned the pre-2016-11 layout (buckets inline on the label row).
+PARSER_VERSION = 2
 RECENT_MONTHS = 6
 # Below this the forward book routinely crosses zero and ratio checks are noise.
 MATERIAL_BOOK_USD_MN = 20000
@@ -93,8 +100,43 @@ def _rows(html: bytes) -> list[list[str]]:
     return out
 
 
+BUCKET_ORDER = ["total", "m0_1", "m1_3", "m3_12"]
+
+
+def _buckets_inline(row: list[str]) -> dict:
+    """Older layout: the four maturity buckets are COLUMNS of the label row.
+
+    Up to and including 2016-10 the IRFCL template printed
+
+        ['(a) Short positions ( - )', '-20493.00', '-17036.00', '-2593.00', '-864.00']
+
+    against the column header 'Total | Up to 1 month | 1-3 months | 3-12 months'
+    carried once, higher up the table. From 2016-11 the same numbers moved into
+    named sub-rows beneath the label. Reading only the sub-row form silently
+    dropped the forward book for every month before Nov-2016 — the reserve level
+    still parsed, so the row looked present while the column that actually
+    matters was blank.
+
+    Positional reads are dangerous, so this one is checked: the first value must
+    equal the sum of the other three, which is a property of the published table
+    and not of the parse. If it does not, return nothing and let the caller warn.
+    """
+    vals = [v for v in (num(c) for c in row[1:]) if v is not None]
+    if len(vals) != 4:
+        return {}
+    total, parts = vals[0], vals[1:]
+    if abs(total - sum(parts)) > max(1.0, abs(total) * 0.01):
+        return {}
+    return dict(zip(BUCKET_ORDER, vals))
+
+
 def _buckets_after(rows: list[list[str]], i: int) -> dict:
-    """Read the maturity sub-rows that follow a label row."""
+    """Read the maturity buckets belonging to the label row at index i.
+
+    Two published layouts, tried newest-first: named sub-rows beneath the label
+    (2016-11 onward), then the four columns inline on the label row itself
+    (2016-10 and earlier).
+    """
     got: dict[str, float | None] = {}
     for j in range(i + 1, min(i + 9, len(rows))):
         label = rows[j][0]
@@ -104,6 +146,8 @@ def _buckets_after(rows: list[list[str]], i: int) -> dict:
         if key in got:
             break                      # next item's block began
         got[key] = num(rows[j][1]) if len(rows[j]) > 1 else None
+    if not got:
+        got = _buckets_inline(rows[i])
     return got
 
 
@@ -191,6 +235,21 @@ def run(dq: DQ, deadline: Deadline | None = None) -> dict:
     needs_reparse = {k for k, v in rows_on_file.items() if not v.get("short_total")}
     misses = {r["ref_month"]: _int(r.get("attempts"))
               for r in read_existing("rbi/_irfcl_misses.csv") if r.get("ref_month")}
+    # A parser bump forgives the retry counter for months it might now be able to
+    # read. Without this, five months of mid-2016 were three runs away from being
+    # abandoned for good — and every month before them would have followed, since
+    # they share the layout the parser could not read. The reserve level parsed
+    # fine throughout, so the rows looked present while the forward book — the
+    # column the buffers signal is built on — was quietly blank.
+    revived = sorted(k for k in needs_reparse
+                     if _int(rows_on_file[k].get("parser_version")) < PARSER_VERSION
+                     and misses.get(k, 0) >= MAX_PROBE_ATTEMPTS)
+    for k in needs_reparse:
+        if _int(rows_on_file[k].get("parser_version")) < PARSER_VERSION:
+            misses.pop(k, None)
+    if revived:
+        dq.note(NAME, f"parser v{PARSER_VERSION}: {len(revived)} abandoned months "
+                      f"re-queued ({revived[0]}..{revived[-1]})")
 
     today = date.today()
     targets = list(month_iter(START, month_end(today.year, today.month)))
@@ -270,6 +329,7 @@ def run(dq: DQ, deadline: Deadline | None = None) -> dict:
             # Positive = RBI is net short dollars forward, i.e. capacity consumed.
             "net_short_usd_mn": "" if net is None else f"{net:.2f}",
             "official_reserve_assets_usd_mn": _f(got["total_reserves"]),
+            "parser_version": str(PARSER_VERSION),
         }
         fetched += 1
 
@@ -280,7 +340,7 @@ def run(dq: DQ, deadline: Deadline | None = None) -> dict:
     write_csv("rbi/forward_book.csv", ordered,
               ["ref_month", "release_date", "short_total", "short_0_1m",
                "short_1_3m", "short_3_12m", "long_total", "net_short_usd_mn",
-               "official_reserve_assets_usd_mn"])
+               "official_reserve_assets_usd_mn", "parser_version"])
     # Written unconditionally: guarding on truthiness left stale rows on disk
     # after the last miss was resolved, so a resurrected month got fewer retries.
     write_csv("rbi/_irfcl_misses.csv",

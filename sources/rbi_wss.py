@@ -26,6 +26,7 @@ never touches rbidocs.rbi.org.in, which CAPTCHAs all automated requests.
 """
 from __future__ import annotations
 
+import os
 import re
 
 from bs4 import BeautifulSoup
@@ -37,7 +38,7 @@ from .common import (DQ, Deadline, FetchError, archive_raw, get,
 NAME = "rbi_wss_reserves"
 INDEX = "https://www.rbi.org.in/Scripts/WSSViewDetail.aspx?TYPE=Section&PARAM1=2"
 DETAIL = "https://www.rbi.org.in/Scripts/WSSView.aspx?Id={}"
-MAX_NEW_PER_RUN = 60
+MAX_NEW_PER_RUN = 1500 if os.environ.get("DEEP", "").strip() not in ("", "0", "false", "False") else 60
 MAX_ATTEMPTS = 4
 
 # Bump when the parser changes: stored rows below this are re-derived from the

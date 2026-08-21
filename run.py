@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import traceback
 from datetime import datetime, timezone
@@ -49,6 +50,25 @@ SOURCES = {
 
 GLOBAL_BUDGET_S = 1500   # 25 min; workflow step timeout is 30 min
 assert sum(b for _m, _d, b in SOURCES.values()) <= GLOBAL_BUDGET_S
+
+# DEEP mode: drain the whole backlog in one run instead of a slice a day.
+#
+# The daily budget is sized for a steady state where each run picks up a handful
+# of new observations. It is the wrong shape for the initial fill: the forward
+# book spent 27s of its 360s budget fetching 31 months, so the thing rationing
+# the backfill was the per-run CAP, not the clock, and a 25-year series was going
+# to take a fortnight of nightly runs for no reason. Setting DEEP=1 lifts the
+# caps and the clock together, for a manually dispatched run. The job timeout is
+# 60 min, so the step gets 50 min and the fetch budget 47.5.
+DEEP = os.environ.get("DEEP", "").strip() not in ("", "0", "false", "False")
+if DEEP:
+    GLOBAL_BUDGET_S = 2850
+    SOURCES = {**SOURCES,
+               "rbi_forward_book": SOURCES["rbi_forward_book"][:2] + (1200,),
+               "rbi_wss": SOURCES["rbi_wss"][:2] + (900,),
+               "market": SOURCES["market"][:2] + (300,),
+               "nsdl_fpi": SOURCES["nsdl_fpi"][:2] + (120,)}
+    assert sum(b for _m, _d, b in SOURCES.values()) <= GLOBAL_BUDGET_S
 
 
 def main() -> int:

@@ -85,6 +85,32 @@ IRFCL = b"""<html><body><table>
 <tr><td>(a) short positions (\xe2\x80\x93)</td><td>0.00</td></tr>
 </table></body></html>"""
 
+# The OLDER layout, used up to and including 2016-10, reduced from the archived
+# 2016-10 page. There are no maturity sub-rows: the four buckets are columns of
+# the label row, against a header carried once further up the table. Reading only
+# the newer form left the forward book blank for every month before 2016-11 while
+# the reserve level still parsed, so the rows looked complete.
+IRFCL_OLD = b"""<html><body><table>
+<tr><td>(In USD Million) I. Official reserve assets October 2016 II. Predetermined
+    short-term net drains</td></tr>
+<tr><td>I. Official reserve assets and other foreign currency assets October 2016</td></tr>
+<tr><td>A. Official reserve assets</td><td>366212.00</td></tr>
+<tr><td></td><td>Total</td><td>Maturity breakdown (residual maturity)</td></tr>
+<tr><td>Up to 1 month</td><td>More than 1 and up to 3 months</td>
+    <td>More than 3 months and up to 1 year</td></tr>
+<tr><td>2. Aggregate short and long positions in forwards and futures in foreign
+    currencies vis-\xc3\xa0-vis the domestic currency</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>(a) Short positions ( - )</td><td>-20493.00</td><td>-17036.00</td>
+    <td>-2593.00</td><td>-864.00</td></tr>
+<tr><td>(b) Long positions (+)</td><td>28309.00</td><td>11898.00</td>
+    <td>3829.00</td><td>12582.00</td></tr>
+</table></body></html>"""
+
+# Same old layout but with the total deliberately broken. The inline read is
+# positional, so it is gated on the published identity total == sum(buckets); if
+# that fails the month must come back blank rather than confidently wrong.
+IRFCL_OLD_BAD = IRFCL_OLD.replace(b"<td>-20493.00</td>", b"<td>-99999.00</td>")
+
 # RBI serves this, with HTTP 200, for any date that has no release.
 IRFCL_ERROR = b"""<html><body><table>
 <tr><td>Error occured. Please try again.</td></tr>
@@ -105,6 +131,23 @@ def test_irfcl():
     buckets = sum(got["short"][k] for k in ("m0_1", "m1_3", "m3_12"))
     check("buckets sum to total", buckets, st)
     check("all rows captured for raw dump", len(rows) >= 10, True)
+
+
+def test_irfcl_old_layout():
+    print("IRFCL pre-2016-11 layout (buckets inline on the label row)")
+    got, _ = _extract(IRFCL_OLD)
+    check("reference month", got["ref_month"], "2016-10")
+    check("short total", got["short"].get("total"), -20493.0)
+    check("short 0-1m", got["short"].get("m0_1"), -17036.0)
+    check("short 1-3m", got["short"].get("m1_3"), -2593.0)
+    check("short 3-12m", got["short"].get("m3_12"), -864.0)
+    check("long total", got["long"].get("total"), 28309.0)
+    check("official reserve assets", got["total_reserves"], 366212.0)
+    st, lt = got["short"]["total"], got["long"]["total"]
+    check("net short (negative = net long forward)", (-st) - lt, -7816.0)
+
+    bad, _ = _extract(IRFCL_OLD_BAD)
+    check("checksum rejects a total that is not the sum", bad["short"], {})
 
 
 def test_irfcl_error_page():
@@ -208,7 +251,7 @@ def test_dq():
 
 
 def main() -> int:
-    for fn in (test_num, test_irfcl, test_irfcl_error_page,
+    for fn in (test_num, test_irfcl, test_irfcl_old_layout, test_irfcl_error_page,
                test_wss_index, test_wss, test_dq):
         fn()
     print()
