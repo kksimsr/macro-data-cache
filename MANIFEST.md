@@ -1,32 +1,28 @@
 # Data manifest
 
-Last run: **2026-08-21T03:31:52+00:00** · 129.1s · 1 errors, 10 warnings
+Last run: **2026-08-21T08:42:30+00:00** · 136.6s · 0 errors, 10 warnings
 
 | source | status | detail |
 |---|---|---|
-| `rbi_forward_book` | ok | n_months=119, parsed=114, last=2026-06, backfill_remaining=179, seconds=27.3 |
-| `rbi_wss` | ok | n_weeks=180, last=2026-08-07, backfill_remaining=1209, seconds=23.8 |
-| `rbihub` | ok | 4 series, seconds=1.6 |
-| `nsdl_fpi` | **FAILED** | FetchError: NSDL unreachable: HTTPSConnectionPool(host='www.fpi.nsdl.co.in', port=443): Max retries exceeded with url: /web/Reports/Yearwise.aspx?RptType=6 (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.fpi.nsdl.co.in', port=443) at 0x7eff49c21490>, 'Connection to www.fpi.nsdl.co.in timed out. (connect timeout=5)')) |
-| `india_misc` | ok | seconds=4.9 |
-| `market` | ok | 27 series, seconds=44.1 |
-
-## Errors
-
-- **nsdl_fpi** — source failed: FetchError: NSDL unreachable: HTTPSConnectionPool(host='www.fpi.nsdl.co.in', port=443): Max retries exceeded with url: /web/Reports/Yearwise.aspx?RptType=6 (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.fpi.nsdl.co.in', port=443) at 0x7eff49c21490>, 'Connection to www.fpi.nsdl.co.in timed out. (connect timeout=5)'))
+| `rbi_forward_book` | ok | n_months=131, parsed=131, last=2026-06, backfill_remaining=156, seconds=35.9 |
+| `rbi_wss` | ok | n_weeks=240, last=2026-08-07, backfill_remaining=1149, seconds=25.4 |
+| `rbihub` | ok | 4 series, seconds=1.7 |
+| `nsdl_fpi` | ok | n=8, last=2026-08, backfill_remaining=19, seconds=25.5 |
+| `india_misc` | ok | seconds=4.2 |
+| `market` | ok | 27 series, seconds=43.9 |
 
 ## Warnings
 
 - *market* — DGS10 (US 10y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)
 - *market* — coverage gaps (8): DGS10, DGS2, DFII10, DFF, DTWEXBGS, BAMLEMCBPIOAS, TRESEGINM052N, RBINBIS — FRED-only series, no mirror exists; retried next run
-- *rbi_forward_book* — 2016-10: short-position total not found (raw archived)
-- *rbi_forward_book* — 2016-09: short-position total not found (raw archived)
-- *rbi_forward_book* — 2016-08: short-position total not found (raw archived)
-- *rbi_forward_book* — 2016-07: short-position total not found (raw archived)
-- *rbi_forward_book* — 2016-05: short-position total not found (raw archived)
 - *rbi_forward_book* — 1 months given up on after 3 confirmed-absent probes: 2023-03
 - *rbihub* — sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (142d) — mirror lag, patch the tail from another route
 - *rbihub* — sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (142d) — mirror lag, patch the tail from another route
+- *nsdl_fpi* — 2021: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
+- *nsdl_fpi* — 2022: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
+- *nsdl_fpi* — 2023: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
+- *nsdl_fpi* — 2024: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
+- *nsdl_fpi* — 2025: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
 
 ## Coverage gaps
 

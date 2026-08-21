@@ -1,28 +1,28 @@
 {
-  "run_started_utc": "2026-08-21T03:29:43+00:00",
-  "run_finished_utc": "2026-08-21T03:31:52+00:00",
-  "duration_s": 129.1,
+  "run_started_utc": "2026-08-21T08:40:13+00:00",
+  "run_finished_utc": "2026-08-21T08:42:30+00:00",
+  "duration_s": 136.6,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
       "files": [
         "data/rbi/forward_book.csv"
       ],
-      "n_months": 119,
-      "parsed": 114,
-      "backfill_remaining": 179,
+      "n_months": 131,
+      "parsed": 131,
+      "backfill_remaining": 156,
       "last": "2026-06",
-      "seconds": 27.3
+      "seconds": 35.9
     },
     "rbi_wss": {
       "status": "ok",
       "files": [
         "data/rbi/fx_reserves_weekly.csv"
       ],
-      "n_weeks": 180,
+      "n_weeks": 240,
       "last": "2026-08-07",
-      "backfill_remaining": 1209,
-      "seconds": 23.8
+      "backfill_remaining": 1149,
+      "seconds": 25.4
     },
     "rbihub": {
       "status": "ok",
@@ -54,12 +54,17 @@
           "last": "Sep"
         }
       },
-      "seconds": 1.6
+      "seconds": 1.7
     },
     "nsdl_fpi": {
-      "status": "failed",
-      "error": "FetchError: NSDL unreachable: HTTPSConnectionPool(host='www.fpi.nsdl.co.in', port=443): Max retries exceeded with url: /web/Reports/Yearwise.aspx?RptType=6 (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.fpi.nsdl.co.in', port=443) at 0x7eff49c21490>, 'Connection to www.fpi.nsdl.co.in timed out. (connect timeout=5)'))",
-      "seconds": 27.3
+      "status": "ok",
+      "files": [
+        "data/india/fpi_flows_monthly.csv"
+      ],
+      "n": 8,
+      "last": "2026-08",
+      "backfill_remaining": 19,
+      "seconds": 25.5
     },
     "india_misc": {
       "status": "ok",
@@ -68,7 +73,7 @@
         "raw/wpi/wpi_monthly_index_202608.xlsx.gz",
         "raw/wpi/monthly_index_202607.xls.gz"
       ],
-      "seconds": 4.9
+      "seconds": 4.2
     },
     "market": {
       "status": "ok",
@@ -275,17 +280,17 @@
         "TRESEGINM052N",
         "RBINBIS"
       ],
-      "seconds": 44.1
+      "seconds": 43.9
     }
   },
   "dq": {
-    "errors": 1,
+    "errors": 0,
     "warnings": 10,
     "entries": [
       {
         "level": "note",
         "source": "india_misc",
-        "msg": "NSE IV: 1538 strike-legs captured, 11 with open interest"
+        "msg": "NSE IV: 15 strike-legs captured, 10 with open interest"
       },
       {
         "level": "note",
@@ -305,7 +310,7 @@
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 5 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 6 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -325,42 +330,17 @@
       {
         "level": "warn",
         "source": "rbi_forward_book",
-        "msg": "2016-10: short-position total not found (raw archived)"
-      },
-      {
-        "level": "warn",
-        "source": "rbi_forward_book",
-        "msg": "2016-09: short-position total not found (raw archived)"
-      },
-      {
-        "level": "warn",
-        "source": "rbi_forward_book",
-        "msg": "2016-08: short-position total not found (raw archived)"
-      },
-      {
-        "level": "warn",
-        "source": "rbi_forward_book",
-        "msg": "2016-07: short-position total not found (raw archived)"
-      },
-      {
-        "level": "warn",
-        "source": "rbi_forward_book",
-        "msg": "2016-05: short-position total not found (raw archived)"
-      },
-      {
-        "level": "warn",
-        "source": "rbi_forward_book",
         "msg": "1 months given up on after 3 confirmed-absent probes: 2023-03"
       },
       {
         "level": "note",
         "source": "rbi_forward_book",
-        "msg": "119 months on file, 31 fetched, 5 missed, 114 parsed, ~179 left to backfill"
+        "msg": "131 months on file, 21 fetched, 15 missed, 131 parsed, ~156 left to backfill"
       },
       {
         "level": "note",
         "source": "rbi_wss_reserves",
-        "msg": "180 weeks (units US$ mn, dated by as-on not publication); 60 new; ~1209 to backfill"
+        "msg": "240 weeks (units US$ mn, dated by as-on not publication); 60 new; ~1149 to backfill"
       },
       {
         "level": "warn",
@@ -393,9 +373,39 @@
         "msg": "external-commercial-borrowings: 82 rows, last Sep"
       },
       {
-        "level": "error",
+        "level": "warn",
         "source": "nsdl_fpi",
-        "msg": "source failed: FetchError: NSDL unreachable: HTTPSConnectionPool(host='www.fpi.nsdl.co.in', port=443): Max retries exceeded with url: /web/Reports/Yearwise.aspx?RptType=6 (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.fpi.nsdl.co.in', port=443) at 0x7eff49c21490>, 'Connection to www.fpi.nsdl.co.in timed out. (connect timeout=5)'))"
+        "msg": "2021: postback refused (ConnectionError) \u2014 historical backfill needs a browser; the current year is unaffected"
+      },
+      {
+        "level": "warn",
+        "source": "nsdl_fpi",
+        "msg": "2022: postback refused (ConnectionError) \u2014 historical backfill needs a browser; the current year is unaffected"
+      },
+      {
+        "level": "warn",
+        "source": "nsdl_fpi",
+        "msg": "2023: postback refused (ConnectionError) \u2014 historical backfill needs a browser; the current year is unaffected"
+      },
+      {
+        "level": "warn",
+        "source": "nsdl_fpi",
+        "msg": "2024: postback refused (ConnectionError) \u2014 historical backfill needs a browser; the current year is unaffected"
+      },
+      {
+        "level": "warn",
+        "source": "nsdl_fpi",
+        "msg": "2025: postback refused (ConnectionError) \u2014 historical backfill needs a browser; the current year is unaffected"
+      },
+      {
+        "level": "note",
+        "source": "nsdl_fpi",
+        "msg": "column mapping reconciles in 7/7 months"
+      },
+      {
+        "level": "note",
+        "source": "nsdl_fpi",
+        "msg": "8 months on file (units: INR crore); ~19 years still to backfill"
       }
     ]
   }
