@@ -1,33 +1,28 @@
 {
-  "run_started_utc": "2026-08-20T12:20:40+00:00",
-  "run_finished_utc": "2026-08-20T12:28:21+00:00",
-  "duration_s": 461.4,
+  "run_started_utc": "2026-08-21T03:29:43+00:00",
+  "run_finished_utc": "2026-08-21T03:31:52+00:00",
+  "duration_s": 129.1,
   "sources": {
-    "fred": {
-      "status": "failed",
-      "error": "FetchError: FRED returned nothing at all. First error was: graph: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | data: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)",
-      "seconds": 422.2
-    },
     "rbi_forward_book": {
       "status": "ok",
       "files": [
         "data/rbi/forward_book.csv"
       ],
-      "n_months": 63,
-      "parsed": 63,
-      "backfill_remaining": 237,
+      "n_months": 119,
+      "parsed": 114,
+      "backfill_remaining": 179,
       "last": "2026-06",
-      "seconds": 28.1
+      "seconds": 27.3
     },
     "rbi_wss": {
       "status": "ok",
       "files": [
         "data/rbi/fx_reserves_weekly.csv"
       ],
-      "n_weeks": 60,
+      "n_weeks": 180,
       "last": "2026-08-07",
-      "backfill_remaining": 1329,
-      "seconds": 23.1
+      "backfill_remaining": 1209,
+      "seconds": 23.8
     },
     "rbihub": {
       "status": "ok",
@@ -59,17 +54,12 @@
           "last": "Sep"
         }
       },
-      "seconds": 1.4
+      "seconds": 1.6
     },
     "nsdl_fpi": {
-      "status": "ok",
-      "files": [
-        "data/india/fpi_flows_monthly.csv"
-      ],
-      "n": 8,
-      "last": "2026-08",
-      "backfill_remaining": 19,
-      "seconds": 37.8
+      "status": "failed",
+      "error": "FetchError: NSDL unreachable: HTTPSConnectionPool(host='www.fpi.nsdl.co.in', port=443): Max retries exceeded with url: /web/Reports/Yearwise.aspx?RptType=6 (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.fpi.nsdl.co.in', port=443) at 0x7eff49c21490>, 'Connection to www.fpi.nsdl.co.in timed out. (connect timeout=5)'))",
+      "seconds": 27.3
     },
     "india_misc": {
       "status": "ok",
@@ -78,7 +68,7 @@
         "raw/wpi/wpi_monthly_index_202608.xlsx.gz",
         "raw/wpi/monthly_index_202607.xls.gz"
       ],
-      "seconds": 6.7
+      "seconds": 4.9
     },
     "market": {
       "status": "ok",
@@ -252,9 +242,9 @@
         },
         "vix_daily": {
           "label": "VIX close, daily",
-          "n": 9253,
+          "n": 9254,
           "first": "1990-01-02",
-          "last": "2026-08-18"
+          "last": "2026-08-19"
         },
         "gold_monthly": {
           "label": "Gold USD/oz, monthly",
@@ -285,17 +275,17 @@
         "TRESEGINM052N",
         "RBINBIS"
       ],
-      "seconds": 364.3
+      "seconds": 44.1
     }
   },
   "dq": {
-    "errors": 2,
-    "warnings": 16,
+    "errors": 1,
+    "warnings": 10,
     "entries": [
       {
         "level": "note",
         "source": "india_misc",
-        "msg": "NSE IV: 13 strike-legs captured, 11 with open interest"
+        "msg": "NSE IV: 1538 strike-legs captured, 11 with open interest"
       },
       {
         "level": "note",
@@ -313,44 +303,14 @@
         "msg": "FX mirror: 21 currencies; INR 13439 obs to 2026-08-14"
       },
       {
-        "level": "warn",
+        "level": "note",
         "source": "market",
-        "msg": "DGS10 (US 10y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
+        "msg": "FRED circuit breaker open after 5 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
         "source": "market",
-        "msg": "DGS2 (US 2y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
-      },
-      {
-        "level": "warn",
-        "source": "market",
-        "msg": "DFII10 (US 10y TIPS real, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
-      },
-      {
-        "level": "warn",
-        "source": "market",
-        "msg": "DFF (Fed funds effective, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
-      },
-      {
-        "level": "warn",
-        "source": "market",
-        "msg": "DTWEXBGS (Broad USD index, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
-      },
-      {
-        "level": "warn",
-        "source": "market",
-        "msg": "BAMLEMCBPIOAS (EM corporate OAS, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
-      },
-      {
-        "level": "warn",
-        "source": "market",
-        "msg": "TRESEGINM052N (India reserves excl gold, monthly (IMF IFS)) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
-      },
-      {
-        "level": "warn",
-        "source": "market",
-        "msg": "RBINBIS (BIS real broad EER, India, monthly) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
+        "msg": "DGS10 (US 10y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
       },
       {
         "level": "warn",
@@ -363,29 +323,49 @@
         "msg": "27 series written, 8 gaps"
       },
       {
-        "level": "error",
+        "level": "warn",
         "source": "rbi_forward_book",
-        "msg": "2023-12: net short -2,184 is a >75% collapse from 2023-11 (11,901) \u2014 suspect wrong cell"
+        "msg": "2016-10: short-position total not found (raw archived)"
       },
       {
-        "level": "error",
+        "level": "warn",
         "source": "rbi_forward_book",
-        "msg": "2024-03: net short 541 is a >75% collapse from 2024-02 (-9,694) \u2014 suspect wrong cell"
+        "msg": "2016-09: short-position total not found (raw archived)"
+      },
+      {
+        "level": "warn",
+        "source": "rbi_forward_book",
+        "msg": "2016-08: short-position total not found (raw archived)"
+      },
+      {
+        "level": "warn",
+        "source": "rbi_forward_book",
+        "msg": "2016-07: short-position total not found (raw archived)"
+      },
+      {
+        "level": "warn",
+        "source": "rbi_forward_book",
+        "msg": "2016-05: short-position total not found (raw archived)"
+      },
+      {
+        "level": "warn",
+        "source": "rbi_forward_book",
+        "msg": "1 months given up on after 3 confirmed-absent probes: 2023-03"
       },
       {
         "level": "note",
         "source": "rbi_forward_book",
-        "msg": "63 months on file, 33 fetched, 3 missed, 63 parsed, ~237 left to backfill"
+        "msg": "119 months on file, 31 fetched, 5 missed, 114 parsed, ~179 left to backfill"
       },
       {
         "level": "note",
         "source": "rbi_wss_reserves",
-        "msg": "60 weeks (units US$ mn, dated by as-on not publication); 60 new; ~1329 to backfill"
+        "msg": "180 weeks (units US$ mn, dated by as-on not publication); 60 new; ~1209 to backfill"
       },
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (141d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (142d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -395,7 +375,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (141d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (142d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -413,39 +393,9 @@
         "msg": "external-commercial-borrowings: 82 rows, last Sep"
       },
       {
-        "level": "warn",
+        "level": "error",
         "source": "nsdl_fpi",
-        "msg": "2021: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
-      },
-      {
-        "level": "warn",
-        "source": "nsdl_fpi",
-        "msg": "2022: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
-      },
-      {
-        "level": "warn",
-        "source": "nsdl_fpi",
-        "msg": "2023: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
-      },
-      {
-        "level": "warn",
-        "source": "nsdl_fpi",
-        "msg": "2024: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
-      },
-      {
-        "level": "warn",
-        "source": "nsdl_fpi",
-        "msg": "2025: postback failed after 3 tries (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
-      },
-      {
-        "level": "note",
-        "source": "nsdl_fpi",
-        "msg": "column mapping reconciles in 7/7 months"
-      },
-      {
-        "level": "note",
-        "source": "nsdl_fpi",
-        "msg": "8 months on file (units: INR crore); ~19 years still to backfill"
+        "msg": "source failed: FetchError: NSDL unreachable: HTTPSConnectionPool(host='www.fpi.nsdl.co.in', port=443): Max retries exceeded with url: /web/Reports/Yearwise.aspx?RptType=6 (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.fpi.nsdl.co.in', port=443) at 0x7eff49c21490>, 'Connection to www.fpi.nsdl.co.in timed out. (connect timeout=5)'))"
       }
     ]
   }
