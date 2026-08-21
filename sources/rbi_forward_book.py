@@ -26,8 +26,18 @@ with an empty value, and the numbers follow underneath as separate maturity rows
 
 An earlier version read the value off the label row and silently latched onto a
 memo line near the foot of the page, producing figures ~30x too small (-1,366
-instead of -40,326 for May-2026). Hence: values are only ever read from the
-maturity sub-rows, and the parsed total is sanity-checked below.
+instead of -40,326 for May-2026). Hence: in this layout values are only ever read
+from the maturity sub-rows, and the parsed total is sanity-checked below.
+
+THERE ARE TWO LAYOUTS. Up to and including 2016-10 the same four numbers were
+COLUMNS of the label row instead, against a header carried once higher up:
+
+    ['(a) Short positions ( - )', '-20493.00', '-17036.00', '-2593.00', '-864.00']
+
+Knowing only the newer form left the forward book blank for every month before
+2016-11 while the reserve level on the same page parsed fine — so the rows looked
+complete and the column the whole dataset exists for was empty. See
+_buckets_inline; the positional read is gated on total == sum(buckets).
 
 TWO VALIDATION TRAPS, both hit in the first live run:
 1. RBI returns an HTTP 200 page reading "Error occured. Please try again." for
@@ -39,6 +49,7 @@ we asked for.
 """
 from __future__ import annotations
 
+import os
 import re
 from datetime import date, timedelta
 
@@ -52,8 +63,15 @@ NAME = "rbi_forward_book"
 URL = "https://rbi.org.in/scripts/Bs_sddsviewhtmldetails.aspx?pg=IMF{}.html"
 START = date(2001, 6, 1)
 
-MAX_NEW_PER_RUN = 36
-MAX_PROBE_ATTEMPTS = 3
+# Per-run cap. In DEEP mode the deadline is the only limit — the cap exists to
+# keep a nightly run short, not to protect anything, and leaving it at 36 meant
+# the initial 25-year fill was rationed to a fortnight for no reason.
+DEEP = os.environ.get("DEEP", "").strip() not in ("", "0", "false", "False")
+MAX_NEW_PER_RUN = 600 if DEEP else 36
+# A deep run gets one extra attempt per month: it also probes a WIDER date
+# window (see _probe), so a month that "confirmed absent" three times under the
+# narrow window has not really been confirmed absent yet.
+MAX_PROBE_ATTEMPTS = 4 if DEEP else 3
 # Bump when the parsing logic changes. Months that are on file WITHOUT a forward
 # book and were written by an older parser get their retry counter forgiven, so a
 # layout the parser has just learned to read is re-attempted instead of staying
@@ -206,8 +224,15 @@ def _probe(ym: tuple[int, int], deadline: Deadline | None = None):
     rel_month_end = month_end(y + (m // 12), (m % 12) + 1)
     today = date.today()
     # Window extends a few days into M+2: a release delayed past month-end by a
-    # holiday cluster would otherwise never be found.
-    cands = [c for c in last_working_days(rel_month_end + timedelta(days=4), n=9)
+    # holiday cluster would otherwise never be found. Every release found so far
+    # sits 25-30 days after the reference month's end, i.e. the last week of
+    # M+1 — but ten months of 2015 came back "no release" under the 9-day
+    # window, and a hole that size in a statutory SDDS series is more likely a
+    # delayed release than a genuine gap. A deep run therefore looks ~2 weeks
+    # further into M+2 (and one extra attempt is allowed, see above).
+    n_cands, ahead = (16, 14) if DEEP else (9, 4)
+    cands = [c for c in last_working_days(rel_month_end + timedelta(days=ahead),
+                                          n=n_cands)
              if c <= today]
     if not cands:
         return ref, TOO_EARLY, None, None, None
