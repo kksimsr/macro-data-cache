@@ -24,7 +24,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from sources import (india_external, india_misc, market, nsdl_fpi,
-                     rbi_forward_book, rbi_wss, rbihub, stooq)
+                     official_rates, rbi_forward_book, rbi_wss, rbihub)
 from sources.common import DQ, LOGS, ROOT, Deadline
 
 # name -> (module, description, time budget in seconds)
@@ -42,13 +42,17 @@ from sources.common import DQ, LOGS, ROOT, Deadline
 SOURCES = {
     "india_misc": (india_misc, "WPI + NSE USD/INR option IV (append-only)", 150),
     "market": (market, "GitHub mirrors + FRED — FX, oil, VIX, US rates", 300),
-    "rbi_forward_book": (rbi_forward_book, "RBI IRFCL — net forward book", 360),
-    "rbi_wss": (rbi_wss, "RBI WSS — weekly FX reserves", 270),
+    # Both backfills reported remaining=0 on 2026-08-23, so these are now
+    # steady-state budgets — a handful of new observations a run, not a
+    # 25-year fill. The headroom went to the two new sources.
+    "rbi_forward_book": (rbi_forward_book, "RBI IRFCL — net forward book", 300),
+    "rbi_wss": (rbi_wss, "RBI WSS — weekly FX reserves", 240),
     "rbihub": (rbihub, "DBIE mirror — REER, forward premia, intervention, ECB", 150),
     "nsdl_fpi": (nsdl_fpi, "NSDL — monthly FPI flows", 60),
     "india_external": (india_external,
-                       "RBI DBIE — monthly trade, quarterly BoP", 120),
-    "stooq": (stooq, "stooq — DXY, US 10y daily, India 10y G-Sec", 90),
+                       "RBI DBIE — trade, published BoP, FPI flows", 150),
+    "official_rates": (official_rates,
+                       "US Treasury par yields + ECB reference rates", 150),
 }
 
 GLOBAL_BUDGET_S = 1500   # 25 min; workflow step timeout is 30 min
@@ -67,12 +71,12 @@ DEEP = os.environ.get("DEEP", "").strip() not in ("", "0", "false", "False")
 if DEEP:
     GLOBAL_BUDGET_S = 2850
     SOURCES = {**SOURCES,
-               "rbi_forward_book": SOURCES["rbi_forward_book"][:2] + (1050,),
-               "rbi_wss": SOURCES["rbi_wss"][:2] + (780,),
+               "rbi_forward_book": SOURCES["rbi_forward_book"][:2] + (800,),
+               "rbi_wss": SOURCES["rbi_wss"][:2] + (700,),
                "market": SOURCES["market"][:2] + (250,),
                "nsdl_fpi": SOURCES["nsdl_fpi"][:2] + (90,),
                "india_external": SOURCES["india_external"][:2] + (200,),
-               "stooq": SOURCES["stooq"][:2] + (120,)}
+               "official_rates": SOURCES["official_rates"][:2] + (330,)}
     assert sum(b for _m, _d, b in SOURCES.values()) <= GLOBAL_BUDGET_S
 
 
