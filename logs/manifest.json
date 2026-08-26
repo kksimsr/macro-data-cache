@@ -1,7 +1,7 @@
 {
-  "run_started_utc": "2026-08-25T03:26:26+00:00",
-  "run_finished_utc": "2026-08-25T03:28:28+00:00",
-  "duration_s": 122.1,
+  "run_started_utc": "2026-08-26T03:32:51+00:00",
+  "run_finished_utc": "2026-08-26T03:34:21+00:00",
+  "duration_s": 89.9,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
@@ -12,7 +12,7 @@
       "parsed": 161,
       "backfill_remaining": 0,
       "last": "2026-06",
-      "seconds": 24.7
+      "seconds": 4.4
     },
     "rbi_wss": {
       "status": "ok",
@@ -22,7 +22,7 @@
       "n_weeks": 880,
       "last": "2026-08-14",
       "backfill_remaining": 0,
-      "seconds": 5.7
+      "seconds": 5.0
     },
     "rbihub": {
       "status": "ok",
@@ -64,16 +64,16 @@
       "n": 8,
       "last": "2026-08",
       "backfill_remaining": 19,
-      "seconds": 23.0
+      "seconds": 25.7
     },
     "india_misc": {
       "status": "ok",
       "files": [
         "data/india/usdinr_option_iv_log.csv",
         "raw/wpi/wpi_monthly_index_202608.xlsx.gz",
-        "raw/wpi/monthly_index_202606.xls.gz"
+        "raw/wpi/monthly_index_202607.xls.gz"
       ],
-      "seconds": 18.2
+      "seconds": 4.4
     },
     "market": {
       "status": "ok",
@@ -247,9 +247,9 @@
         },
         "vix_daily": {
           "label": "VIX close, daily",
-          "n": 9256,
+          "n": 9257,
           "first": "1990-01-02",
-          "last": "2026-08-21"
+          "last": "2026-08-24"
         },
         "gold_monthly": {
           "label": "Gold USD/oz, monthly",
@@ -280,7 +280,7 @@
         "TRESEGINM052N",
         "RBINBIS"
       ],
-      "seconds": 44.0
+      "seconds": 43.6
     },
     "india_external": {
       "status": "ok",
@@ -305,7 +305,7 @@
         "data/india/fpi_monthly_rbi.csv"
       ],
       "n": 3,
-      "seconds": 1.3
+      "seconds": 1.4
     },
     "official_rates": {
       "status": "ok",
@@ -316,7 +316,7 @@
       ],
       "n": 3,
       "failed": [],
-      "seconds": 3.7
+      "seconds": 3.6
     }
   },
   "dq": {
@@ -326,7 +326,7 @@
       {
         "level": "note",
         "source": "india_misc",
-        "msg": "NSE IV: 1490 strike-legs captured, 12 with open interest"
+        "msg": "NSE IV: 1490 strike-legs captured, 13 with open interest"
       },
       {
         "level": "note",
@@ -336,7 +336,7 @@
       {
         "level": "note",
         "source": "india_misc",
-        "msg": "WPI (2011-12 base) latest file: 202606"
+        "msg": "WPI (2011-12 base) latest file: 202607"
       },
       {
         "level": "note",
@@ -346,7 +346,7 @@
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 14 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 15 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -366,12 +366,12 @@
       {
         "level": "warn",
         "source": "rbi_forward_book",
-        "msg": "140 months given up on after 3 confirmed-absent probes: 2001-06, 2001-07, 2001-08, 2001-09, 2001-10, 2001-11, 2001-12, 2002-01..."
+        "msg": "141 months given up on after 3 confirmed-absent probes: 2001-06, 2001-07, 2001-08, 2001-09, 2001-10, 2001-11, 2001-12, 2002-01..."
       },
       {
         "level": "note",
         "source": "rbi_forward_book",
-        "msg": "165 months on file, 4 fetched, 16 missed, 161 parsed, ~0 left to backfill"
+        "msg": "165 months on file, 4 fetched, 2 missed, 161 parsed, ~0 left to backfill"
       },
       {
         "level": "note",
@@ -381,7 +381,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (146d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (147d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -391,7 +391,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (146d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (147d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -466,7 +466,7 @@
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "ECB reference rates: 7077 days, 1999-01-04 to 2026-08-24, 6 currencies"
+        "msg": "ECB reference rates: 7078 days, 1999-01-04 to 2026-08-25, 6 currencies"
       },
       {
         "level": "note",
@@ -476,12 +476,12 @@
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "treasury 10 Yr: 9167 rows, 1990-01-02 to 2026-08-24, last 4.7"
+        "msg": "treasury 10 Yr: 9168 rows, 1990-01-02 to 2026-08-25, last 4.64"
       },
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "treasury 2 Yr: 9167 rows, 1990-01-02 to 2026-08-24, last 4.24"
+        "msg": "treasury 2 Yr: 9168 rows, 1990-01-02 to 2026-08-25, last 4.17"
       }
     ]
   }
