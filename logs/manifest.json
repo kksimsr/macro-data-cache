@@ -1,7 +1,7 @@
 {
-  "run_started_utc": "2026-09-03T07:19:01+00:00",
-  "run_finished_utc": "2026-09-03T07:20:30+00:00",
-  "duration_s": 89.1,
+  "run_started_utc": "2026-09-04T07:21:41+00:00",
+  "run_finished_utc": "2026-09-04T07:23:16+00:00",
+  "duration_s": 94.6,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
@@ -12,7 +12,7 @@
       "parsed": 162,
       "backfill_remaining": 0,
       "last": "2026-07",
-      "seconds": 6.5
+      "seconds": 6.0
     },
     "rbi_wss": {
       "status": "ok",
@@ -22,7 +22,7 @@
       "n_weeks": 881,
       "last": "2026-08-21",
       "backfill_remaining": 0,
-      "seconds": 7.1
+      "seconds": 5.8
     },
     "rbihub": {
       "status": "ok",
@@ -54,7 +54,7 @@
           "last": "Sep"
         }
       },
-      "seconds": 1.9
+      "seconds": 1.6
     },
     "nsdl_fpi": {
       "status": "ok",
@@ -64,7 +64,7 @@
       "n": 8,
       "last": "2026-08",
       "backfill_remaining": 19,
-      "seconds": 22.3
+      "seconds": 28.6
     },
     "india_misc": {
       "status": "ok",
@@ -73,7 +73,7 @@
         "raw/wpi/wpi_monthly_index_202609.xlsx.gz",
         "raw/wpi/monthly_index_202608.xls.gz"
       ],
-      "seconds": 3.3
+      "seconds": 3.8
     },
     "market": {
       "status": "ok",
@@ -247,9 +247,9 @@
         },
         "vix_daily": {
           "label": "VIX close, daily",
-          "n": 9263,
+          "n": 9264,
           "first": "1990-01-02",
-          "last": "2026-09-01"
+          "last": "2026-09-02"
         },
         "gold_monthly": {
           "label": "Gold USD/oz, monthly",
@@ -305,7 +305,7 @@
         "data/india/fpi_monthly_rbi.csv"
       ],
       "n": 3,
-      "seconds": 1.4
+      "seconds": 1.6
     },
     "official_rates": {
       "status": "ok",
@@ -316,22 +316,17 @@
       ],
       "n": 3,
       "failed": [],
-      "seconds": 3.1
+      "seconds": 3.6
     }
   },
   "dq": {
     "errors": 0,
-    "warnings": 11,
+    "warnings": 10,
     "entries": [
       {
         "level": "note",
         "source": "india_misc",
-        "msg": "NSE IV: 15 strike-legs captured, 9 with open interest"
-      },
-      {
-        "level": "warn",
-        "source": "india_misc",
-        "msg": "very few strikes carry open interest \u2014 post-Apr-2024 liquidity is thin; treat IV-derived factors with suspicion"
+        "msg": "NSE IV: 14 strike-legs captured, 10 with open interest"
       },
       {
         "level": "note",
@@ -351,7 +346,7 @@
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 23 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 24 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -386,7 +381,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (155d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (156d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -396,7 +391,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (155d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (156d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -471,7 +466,7 @@
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "ECB reference rates: 7084 days, 1999-01-04 to 2026-09-02, 6 currencies"
+        "msg": "ECB reference rates: 7085 days, 1999-01-04 to 2026-09-03, 6 currencies"
       },
       {
         "level": "note",
@@ -481,12 +476,12 @@
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "treasury 10 Yr: 9174 rows, 1990-01-02 to 2026-09-02, last 4.79"
+        "msg": "treasury 10 Yr: 9175 rows, 1990-01-02 to 2026-09-03, last 4.77"
       },
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "treasury 2 Yr: 9174 rows, 1990-01-02 to 2026-09-02, last 4.39"
+        "msg": "treasury 2 Yr: 9175 rows, 1990-01-02 to 2026-09-03, last 4.34"
       }
     ]
   }
