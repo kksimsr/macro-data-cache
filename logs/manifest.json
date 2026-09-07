@@ -1,7 +1,7 @@
 {
-  "run_started_utc": "2026-09-06T07:14:42+00:00",
-  "run_finished_utc": "2026-09-06T07:16:13+00:00",
-  "duration_s": 90.6,
+  "run_started_utc": "2026-09-07T07:28:25+00:00",
+  "run_finished_utc": "2026-09-07T07:29:52+00:00",
+  "duration_s": 87.3,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
@@ -12,7 +12,7 @@
       "parsed": 162,
       "backfill_remaining": 0,
       "last": "2026-07",
-      "seconds": 4.2
+      "seconds": 5.0
     },
     "rbi_wss": {
       "status": "ok",
@@ -54,7 +54,7 @@
           "last": "Sep"
         }
       },
-      "seconds": 1.7
+      "seconds": 1.6
     },
     "nsdl_fpi": {
       "status": "ok",
@@ -64,7 +64,7 @@
       "n": 8,
       "last": "2026-08",
       "backfill_remaining": 19,
-      "seconds": 27.6
+      "seconds": 25.5
     },
     "india_misc": {
       "status": "ok",
@@ -280,7 +280,7 @@
         "TRESEGINM052N",
         "RBINBIS"
       ],
-      "seconds": 43.3
+      "seconds": 42.5
     },
     "india_external": {
       "status": "ok",
@@ -305,7 +305,7 @@
         "data/india/fpi_monthly_rbi.csv"
       ],
       "n": 3,
-      "seconds": 1.5
+      "seconds": 1.4
     },
     "official_rates": {
       "status": "ok",
@@ -316,7 +316,7 @@
       ],
       "n": 3,
       "failed": [],
-      "seconds": 3.5
+      "seconds": 2.6
     }
   },
   "dq": {
@@ -326,7 +326,7 @@
       {
         "level": "note",
         "source": "india_misc",
-        "msg": "NSE IV: 1506 strike-legs captured, 12 with open interest"
+        "msg": "NSE IV: 12 strike-legs captured, 10 with open interest"
       },
       {
         "level": "note",
@@ -346,7 +346,7 @@
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 26 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 27 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -381,7 +381,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (158d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (159d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -391,7 +391,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (158d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (159d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
