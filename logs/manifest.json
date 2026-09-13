@@ -1,7 +1,7 @@
 {
-  "run_started_utc": "2026-09-12T07:17:24+00:00",
-  "run_finished_utc": "2026-09-12T07:19:02+00:00",
-  "duration_s": 97.7,
+  "run_started_utc": "2026-09-13T07:35:35+00:00",
+  "run_finished_utc": "2026-09-13T07:37:06+00:00",
+  "duration_s": 91.2,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
@@ -54,7 +54,7 @@
           "last": "Sep"
         }
       },
-      "seconds": 1.7
+      "seconds": 1.6
     },
     "nsdl_fpi": {
       "status": "ok",
@@ -64,7 +64,7 @@
       "n": 8,
       "last": "2026-08",
       "backfill_remaining": 19,
-      "seconds": 31.0
+      "seconds": 23.8
     },
     "india_misc": {
       "status": "ok",
@@ -73,7 +73,7 @@
         "raw/wpi/wpi_monthly_index_202609.xlsx.gz",
         "raw/wpi/monthly_index_202608.xls.gz"
       ],
-      "seconds": 3.9
+      "seconds": 3.0
     },
     "market": {
       "status": "ok",
@@ -247,9 +247,9 @@
         },
         "vix_daily": {
           "label": "VIX close, daily",
-          "n": 9270,
+          "n": 9271,
           "first": "1990-01-02",
-          "last": "2026-09-10"
+          "last": "2026-09-11"
         },
         "gold_monthly": {
           "label": "Gold USD/oz, monthly",
@@ -280,7 +280,7 @@
         "TRESEGINM052N",
         "RBINBIS"
       ],
-      "seconds": 42.9
+      "seconds": 43.9
     },
     "india_external": {
       "status": "ok",
@@ -305,7 +305,7 @@
         "data/india/fpi_monthly_rbi.csv"
       ],
       "n": 3,
-      "seconds": 1.2
+      "seconds": 1.8
     },
     "official_rates": {
       "status": "ok",
@@ -316,7 +316,7 @@
       ],
       "n": 3,
       "failed": [],
-      "seconds": 3.2
+      "seconds": 3.4
     }
   },
   "dq": {
@@ -346,7 +346,7 @@
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 32 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 33 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -376,12 +376,12 @@
       {
         "level": "note",
         "source": "rbi_wss_reserves",
-        "msg": "883 weeks (units US$ mn, dated by as-on not publication); 1 new; ~0 to backfill"
+        "msg": "883 weeks (units US$ mn, dated by as-on not publication); 0 new; ~0 to backfill"
       },
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (164d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (165d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -391,7 +391,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (164d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (165d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
