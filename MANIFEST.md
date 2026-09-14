@@ -1,25 +1,25 @@
 # Data manifest
 
-Last run: **2026-09-13T07:37:06+00:00** · 91.2s · 0 errors, 10 warnings
+Last run: **2026-09-14T08:03:58+00:00** · 87.6s · 0 errors, 10 warnings
 
 | source | status | detail |
 |---|---|---|
 | `rbi_forward_book` | ok | n_months=166, parsed=162, last=2026-07, backfill_remaining=0, seconds=4.6 |
-| `rbi_wss` | ok | n_weeks=883, last=2026-09-04, backfill_remaining=0, seconds=9.2 |
+| `rbi_wss` | ok | n_weeks=883, last=2026-09-04, backfill_remaining=0, seconds=4.3 |
 | `rbihub` | ok | 4 series, seconds=1.6 |
-| `nsdl_fpi` | ok | n=8, last=2026-08, backfill_remaining=19, seconds=23.8 |
-| `india_misc` | ok | seconds=3.0 |
-| `market` | ok | 27 series, seconds=43.9 |
-| `india_external` | ok | n=3, seconds=1.8 |
-| `official_rates` | ok | n=3, seconds=3.4 |
+| `nsdl_fpi` | ok | n=8, last=2026-08, backfill_remaining=19, seconds=24.6 |
+| `india_misc` | ok | seconds=4.3 |
+| `market` | ok | 27 series, seconds=42.9 |
+| `india_external` | ok | n=3, seconds=1.3 |
+| `official_rates` | ok | n=3, seconds=4.0 |
 
 ## Warnings
 
 - *market* — DGS10 (US 10y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)
 - *market* — coverage gaps (8): DGS10, DGS2, DFII10, DFF, DTWEXBGS, BAMLEMCBPIOAS, TRESEGINM052N, RBINBIS — FRED-only series, no mirror exists; retried next run
 - *rbi_forward_book* — 140 months given up on after 3 confirmed-absent probes: 2001-06, 2001-07, 2001-08, 2001-09, 2001-10, 2001-11, 2001-12, 2002-01...
-- *rbihub* — sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (165d) — mirror lag, patch the tail from another route
-- *rbihub* — sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (165d) — mirror lag, patch the tail from another route
+- *rbihub* — sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (166d) — mirror lag, patch the tail from another route
+- *rbihub* — sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (166d) — mirror lag, patch the tail from another route
 - *nsdl_fpi* — 2021: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
 - *nsdl_fpi* — 2022: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
 - *nsdl_fpi* — 2023: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
