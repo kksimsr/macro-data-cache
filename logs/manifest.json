@@ -1,7 +1,7 @@
 {
-  "run_started_utc": "2026-09-15T07:57:22+00:00",
-  "run_finished_utc": "2026-09-15T07:58:45+00:00",
-  "duration_s": 82.8,
+  "run_started_utc": "2026-09-16T07:50:13+00:00",
+  "run_finished_utc": "2026-09-16T07:51:41+00:00",
+  "duration_s": 88.2,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
@@ -12,7 +12,7 @@
       "parsed": 162,
       "backfill_remaining": 0,
       "last": "2026-07",
-      "seconds": 5.0
+      "seconds": 5.2
     },
     "rbi_wss": {
       "status": "ok",
@@ -22,7 +22,7 @@
       "n_weeks": 883,
       "last": "2026-09-04",
       "backfill_remaining": 0,
-      "seconds": 5.0
+      "seconds": 5.1
     },
     "rbihub": {
       "status": "ok",
@@ -54,7 +54,7 @@
           "last": "Sep"
         }
       },
-      "seconds": 1.6
+      "seconds": 1.4
     },
     "nsdl_fpi": {
       "status": "ok",
@@ -64,7 +64,7 @@
       "n": 8,
       "last": "2026-08",
       "backfill_remaining": 19,
-      "seconds": 17.5
+      "seconds": 25.1
     },
     "india_misc": {
       "status": "ok",
@@ -73,7 +73,7 @@
         "raw/wpi/wpi_monthly_index_202609.xlsx.gz",
         "raw/wpi/monthly_index_202608.xls.gz"
       ],
-      "seconds": 4.3
+      "seconds": 4.0
     },
     "market": {
       "status": "ok",
@@ -247,9 +247,9 @@
         },
         "vix_daily": {
           "label": "VIX close, daily",
-          "n": 9271,
+          "n": 9272,
           "first": "1990-01-02",
-          "last": "2026-09-11"
+          "last": "2026-09-14"
         },
         "gold_monthly": {
           "label": "Gold USD/oz, monthly",
@@ -280,7 +280,7 @@
         "TRESEGINM052N",
         "RBINBIS"
       ],
-      "seconds": 44.2
+      "seconds": 43.3
     },
     "india_external": {
       "status": "ok",
@@ -316,7 +316,7 @@
       ],
       "n": 3,
       "failed": [],
-      "seconds": 4.0
+      "seconds": 2.9
     }
   },
   "dq": {
@@ -326,7 +326,7 @@
       {
         "level": "note",
         "source": "india_misc",
-        "msg": "NSE IV: 12 strike-legs captured, 9 with open interest"
+        "msg": "NSE IV: 10 strike-legs captured, 9 with open interest"
       },
       {
         "level": "warn",
@@ -351,7 +351,7 @@
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 35 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 36 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -386,7 +386,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (167d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (168d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -396,7 +396,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (167d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (168d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -471,7 +471,7 @@
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "ECB reference rates: 7092 days, 1999-01-04 to 2026-09-14, 6 currencies"
+        "msg": "ECB reference rates: 7093 days, 1999-01-04 to 2026-09-15, 6 currencies"
       },
       {
         "level": "note",
@@ -481,12 +481,12 @@
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "treasury 10 Yr: 9181 rows, 1990-01-02 to 2026-09-14, last 4.97"
+        "msg": "treasury 10 Yr: 9182 rows, 1990-01-02 to 2026-09-15, last 5"
       },
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "treasury 2 Yr: 9181 rows, 1990-01-02 to 2026-09-14, last 4.65"
+        "msg": "treasury 2 Yr: 9182 rows, 1990-01-02 to 2026-09-15, last 4.67"
       }
     ]
   }
