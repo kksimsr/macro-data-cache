@@ -1,26 +1,25 @@
 # Data manifest
 
-Last run: **2026-09-16T07:51:41+00:00** · 88.2s · 0 errors, 11 warnings
+Last run: **2026-09-17T07:56:37+00:00** · 93.1s · 0 errors, 10 warnings
 
 | source | status | detail |
 |---|---|---|
-| `rbi_forward_book` | ok | n_months=166, parsed=162, last=2026-07, backfill_remaining=0, seconds=5.2 |
-| `rbi_wss` | ok | n_weeks=883, last=2026-09-04, backfill_remaining=0, seconds=5.1 |
-| `rbihub` | ok | 4 series, seconds=1.4 |
+| `rbi_forward_book` | ok | n_months=166, parsed=162, last=2026-07, backfill_remaining=0, seconds=5.1 |
+| `rbi_wss` | ok | n_weeks=883, last=2026-09-04, backfill_remaining=0, seconds=5.2 |
+| `rbihub` | ok | 4 series, seconds=1.8 |
 | `nsdl_fpi` | ok | n=8, last=2026-08, backfill_remaining=19, seconds=25.1 |
-| `india_misc` | ok | seconds=4.0 |
-| `market` | ok | 27 series, seconds=43.3 |
-| `india_external` | ok | n=3, seconds=1.3 |
-| `official_rates` | ok | n=3, seconds=2.9 |
+| `india_misc` | ok | seconds=4.6 |
+| `market` | ok | 27 series, seconds=44.3 |
+| `india_external` | ok | n=3, seconds=1.4 |
+| `official_rates` | ok | n=3, seconds=5.5 |
 
 ## Warnings
 
-- *india_misc* — very few strikes carry open interest — post-Apr-2024 liquidity is thin; treat IV-derived factors with suspicion
 - *market* — DGS10 (US 10y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)
 - *market* — coverage gaps (8): DGS10, DGS2, DFII10, DFF, DTWEXBGS, BAMLEMCBPIOAS, TRESEGINM052N, RBINBIS — FRED-only series, no mirror exists; retried next run
 - *rbi_forward_book* — 140 months given up on after 3 confirmed-absent probes: 2001-06, 2001-07, 2001-08, 2001-09, 2001-10, 2001-11, 2001-12, 2002-01...
-- *rbihub* — sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (168d) — mirror lag, patch the tail from another route
-- *rbihub* — sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (168d) — mirror lag, patch the tail from another route
+- *rbihub* — sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (169d) — mirror lag, patch the tail from another route
+- *rbihub* — sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (169d) — mirror lag, patch the tail from another route
 - *nsdl_fpi* — 2021: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
 - *nsdl_fpi* — 2022: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
 - *nsdl_fpi* — 2023: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
@@ -58,9 +57,9 @@ FRED-only series unavailable this run (no mirror exists); retried next run:
 | `fx_THB` | THB per USD | 11385 | 1981-01-02 | 2026-09-11 |
 | `fx_TWD` | TWD per USD | 10479 | 1983-10-03 | 2026-09-11 |
 | `fx_ZAR` | ZAR per USD | 11709 | 1980-01-02 | 2026-09-11 |
-| `brent_daily` | Brent crude, daily | 9973 | 1987-05-20 | 2026-09-09 |
-| `wti_daily` | WTI crude, daily | 10241 | 1986-01-02 | 2026-09-09 |
-| `vix_daily` | VIX close, daily | 9272 | 1990-01-02 | 2026-09-14 |
+| `brent_daily` | Brent crude, daily | 9087 | 1987-05-20 | 2026-09-15 |
+| `wti_daily` | WTI crude, daily | 9502 | 1986-01-02 | 2026-09-15 |
+| `vix_daily` | VIX close, daily | 9273 | 1990-01-02 | 2026-09-15 |
 | `gold_monthly` | Gold USD/oz, monthly | 2324 | 1833-01 | 2026-08 |
 | `us_cpi_monthly` | US CPI, monthly | 1362 | 1913-01-01 | 2026-07-01 |
 | `us_10y_monthly` | US 10y yield, monthly | 880 | 1953-04-01 | 2026-07-01 |
