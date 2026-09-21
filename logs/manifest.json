@@ -1,7 +1,7 @@
 {
-  "run_started_utc": "2026-09-20T07:51:59+00:00",
-  "run_finished_utc": "2026-09-20T07:53:52+00:00",
-  "duration_s": 113.2,
+  "run_started_utc": "2026-09-21T08:07:39+00:00",
+  "run_finished_utc": "2026-09-21T08:09:30+00:00",
+  "duration_s": 111.5,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
@@ -12,7 +12,7 @@
       "parsed": 162,
       "backfill_remaining": 0,
       "last": "2026-07",
-      "seconds": 14.9
+      "seconds": 5.3
     },
     "rbi_wss": {
       "status": "ok",
@@ -22,7 +22,7 @@
       "n_weeks": 884,
       "last": "2026-09-11",
       "backfill_remaining": 0,
-      "seconds": 14.5
+      "seconds": 16.2
     },
     "rbihub": {
       "status": "ok",
@@ -54,7 +54,7 @@
           "last": "Sep"
         }
       },
-      "seconds": 1.7
+      "seconds": 1.8
     },
     "nsdl_fpi": {
       "status": "ok",
@@ -64,16 +64,16 @@
       "n": 8,
       "last": "2026-08",
       "backfill_remaining": 19,
-      "seconds": 28.8
+      "seconds": 29.5
     },
     "india_misc": {
       "status": "ok",
       "files": [
         "data/india/usdinr_option_iv_log.csv",
         "raw/wpi/wpi_monthly_index_202609.xlsx.gz",
-        "raw/wpi/monthly_index_202608.xls.gz"
+        "raw/wpi/monthly_index_202606.xls.gz"
       ],
-      "seconds": 5.0
+      "seconds": 10.1
     },
     "market": {
       "status": "ok",
@@ -280,7 +280,7 @@
         "TRESEGINM052N",
         "RBINBIS"
       ],
-      "seconds": 43.5
+      "seconds": 43.1
     },
     "india_external": {
       "status": "ok",
@@ -305,7 +305,7 @@
         "data/india/fpi_monthly_rbi.csv"
       ],
       "n": 3,
-      "seconds": 1.8
+      "seconds": 1.9
     },
     "official_rates": {
       "status": "ok",
@@ -316,7 +316,7 @@
       ],
       "n": 3,
       "failed": [],
-      "seconds": 3.0
+      "seconds": 3.6
     }
   },
   "dq": {
@@ -326,7 +326,7 @@
       {
         "level": "note",
         "source": "india_misc",
-        "msg": "NSE IV: 1480 strike-legs captured, 12 with open interest"
+        "msg": "NSE IV: 15 strike-legs captured, 11 with open interest"
       },
       {
         "level": "note",
@@ -336,7 +336,7 @@
       {
         "level": "note",
         "source": "india_misc",
-        "msg": "WPI (2011-12 base) latest file: 202608"
+        "msg": "WPI (2011-12 base) latest file: 202606"
       },
       {
         "level": "note",
@@ -346,7 +346,7 @@
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 40 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 41 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -381,7 +381,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (172d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-04-30 (173d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -391,7 +391,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (172d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-04-30 (173d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
