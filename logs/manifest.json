@@ -1,7 +1,7 @@
 {
-  "run_started_utc": "2026-09-25T08:04:43+00:00",
-  "run_finished_utc": "2026-09-25T08:06:19+00:00",
-  "duration_s": 96.9,
+  "run_started_utc": "2026-09-26T07:56:27+00:00",
+  "run_finished_utc": "2026-09-26T07:58:00+00:00",
+  "duration_s": 92.4,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
@@ -12,17 +12,17 @@
       "parsed": 162,
       "backfill_remaining": 0,
       "last": "2026-07",
-      "seconds": 6.0
+      "seconds": 4.3
     },
     "rbi_wss": {
       "status": "ok",
       "files": [
         "data/rbi/fx_reserves_weekly.csv"
       ],
-      "n_weeks": 884,
-      "last": "2026-09-11",
+      "n_weeks": 885,
+      "last": "2026-09-18",
       "backfill_remaining": 0,
-      "seconds": 5.5
+      "seconds": 6.1
     },
     "rbihub": {
       "status": "ok",
@@ -54,7 +54,7 @@
           "last": "Sep"
         }
       },
-      "seconds": 1.3
+      "seconds": 1.2
     },
     "nsdl_fpi": {
       "status": "ok",
@@ -64,7 +64,7 @@
       "n": 8,
       "last": "2026-08",
       "backfill_remaining": 19,
-      "seconds": 25.4
+      "seconds": 25.6
     },
     "india_misc": {
       "status": "ok",
@@ -73,7 +73,7 @@
         "raw/wpi/wpi_monthly_index_202609.xlsx.gz",
         "raw/wpi/monthly_index_202606.xls.gz"
       ],
-      "seconds": 10.7
+      "seconds": 8.7
     },
     "market": {
       "status": "ok",
@@ -280,7 +280,7 @@
         "TRESEGINM052N",
         "RBINBIS"
       ],
-      "seconds": 42.9
+      "seconds": 42.6
     },
     "india_external": {
       "status": "ok",
@@ -305,7 +305,7 @@
         "data/india/fpi_monthly_rbi.csv"
       ],
       "n": 3,
-      "seconds": 1.2
+      "seconds": 1.3
     },
     "official_rates": {
       "status": "ok",
@@ -316,7 +316,7 @@
       ],
       "n": 3,
       "failed": [],
-      "seconds": 3.8
+      "seconds": 2.6
     }
   },
   "dq": {
@@ -326,7 +326,7 @@
       {
         "level": "note",
         "source": "india_misc",
-        "msg": "NSE IV: 12 strike-legs captured, 10 with open interest"
+        "msg": "NSE IV: 1452 strike-legs captured, 13 with open interest"
       },
       {
         "level": "note",
@@ -346,7 +346,7 @@
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 45 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 46 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -376,7 +376,7 @@
       {
         "level": "note",
         "source": "rbi_wss_reserves",
-        "msg": "884 weeks (units US$ mn, dated by as-on not publication); 0 new; ~0 to backfill"
+        "msg": "885 weeks (units US$ mn, dated by as-on not publication); 1 new; ~0 to backfill"
       },
       {
         "level": "note",
@@ -456,7 +456,7 @@
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "ECB reference rates: 7100 days, 1999-01-04 to 2026-09-24, 6 currencies"
+        "msg": "ECB reference rates: 7101 days, 1999-01-04 to 2026-09-25, 6 currencies"
       },
       {
         "level": "note",
@@ -466,12 +466,12 @@
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "treasury 10 Yr: 9189 rows, 1990-01-02 to 2026-09-24, last 5.18"
+        "msg": "treasury 10 Yr: 9190 rows, 1990-01-02 to 2026-09-25, last 5.17"
       },
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "treasury 2 Yr: 9189 rows, 1990-01-02 to 2026-09-24, last 4.87"
+        "msg": "treasury 2 Yr: 9190 rows, 1990-01-02 to 2026-09-25, last 4.81"
       }
     ]
   }
