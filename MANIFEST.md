@@ -1,17 +1,17 @@
 # Data manifest
 
-Last run: **2026-09-27T08:29:03+00:00** · 91.8s · 0 errors, 8 warnings
+Last run: **2026-09-28T08:53:52+00:00** · 87.2s · 0 errors, 8 warnings
 
 | source | status | detail |
 |---|---|---|
-| `rbi_forward_book` | ok | n_months=166, parsed=162, last=2026-07, backfill_remaining=0, seconds=5.0 |
-| `rbi_wss` | ok | n_weeks=885, last=2026-09-18, backfill_remaining=0, seconds=4.9 |
-| `rbihub` | ok | 4 series, seconds=0.7 |
-| `nsdl_fpi` | ok | n=8, last=2026-08, backfill_remaining=19, seconds=23.4 |
-| `india_misc` | ok | seconds=9.5 |
-| `market` | ok | 27 series, seconds=43.7 |
-| `india_external` | ok | n=3, seconds=0.6 |
-| `official_rates` | ok | n=3, seconds=4.0 |
+| `rbi_forward_book` | ok | n_months=166, parsed=162, last=2026-07, backfill_remaining=0, seconds=12.0 |
+| `rbi_wss` | ok | n_weeks=885, last=2026-09-18, backfill_remaining=0, seconds=5.9 |
+| `rbihub` | ok | 4 series, seconds=0.3 |
+| `nsdl_fpi` | ok | n=8, last=2026-08, backfill_remaining=19, seconds=13.9 |
+| `india_misc` | ok | seconds=9.6 |
+| `market` | ok | 27 series, seconds=42.5 |
+| `india_external` | ok | n=3, seconds=0.4 |
+| `official_rates` | ok | n=3, seconds=2.5 |
 
 ## Warnings
 
