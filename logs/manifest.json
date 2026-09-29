@@ -1,7 +1,7 @@
 {
-  "run_started_utc": "2026-09-28T08:52:25+00:00",
-  "run_finished_utc": "2026-09-28T08:53:52+00:00",
-  "duration_s": 87.2,
+  "run_started_utc": "2026-09-29T08:52:20+00:00",
+  "run_finished_utc": "2026-09-29T08:55:00+00:00",
+  "duration_s": 160.0,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
@@ -12,7 +12,7 @@
       "parsed": 162,
       "backfill_remaining": 0,
       "last": "2026-07",
-      "seconds": 12.0
+      "seconds": 8.4
     },
     "rbi_wss": {
       "status": "ok",
@@ -22,7 +22,7 @@
       "n_weeks": 885,
       "last": "2026-09-18",
       "backfill_remaining": 0,
-      "seconds": 5.9
+      "seconds": 71.5
     },
     "rbihub": {
       "status": "ok",
@@ -45,7 +45,7 @@
         },
         "usd-sale-purchase": {
           "label": "RBI USD sale/purchase (spot intervention)",
-          "n": 368,
+          "n": 374,
           "last": "September 2025"
         },
         "external-commercial-borrowings": {
@@ -54,7 +54,7 @@
           "last": "Sep"
         }
       },
-      "seconds": 0.3
+      "seconds": 1.6
     },
     "nsdl_fpi": {
       "status": "ok",
@@ -64,7 +64,7 @@
       "n": 8,
       "last": "2026-08",
       "backfill_remaining": 19,
-      "seconds": 13.9
+      "seconds": 21.4
     },
     "india_misc": {
       "status": "ok",
@@ -73,7 +73,7 @@
         "raw/wpi/wpi_monthly_index_202609.xlsx.gz",
         "raw/wpi/monthly_index_202606.xls.gz"
       ],
-      "seconds": 9.6
+      "seconds": 8.7
     },
     "market": {
       "status": "ok",
@@ -109,129 +109,129 @@
       "series": {
         "fx_AUD": {
           "label": "AUD per USD",
-          "n": 13964,
+          "n": 13969,
           "first": "1971-01-04",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_BRL": {
           "label": "BRL per USD",
-          "n": 7954,
+          "n": 7959,
           "first": "1995-01-02",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_CAD": {
           "label": "CAD per USD",
-          "n": 13977,
+          "n": 13982,
           "first": "1971-01-04",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_CHF": {
           "label": "CHF per USD",
-          "n": 13971,
+          "n": 13976,
           "first": "1971-01-04",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_CNY": {
           "label": "CNY per USD",
-          "n": 11411,
+          "n": 11416,
           "first": "1981-01-02",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_DKK": {
           "label": "DKK per USD",
-          "n": 13970,
+          "n": 13975,
           "first": "1971-01-04",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_EUR": {
           "label": "EUR per USD",
-          "n": 6950,
+          "n": 6955,
           "first": "1999-01-04",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_GBP": {
           "label": "GBP per USD",
-          "n": 13971,
+          "n": 13976,
           "first": "1971-01-04",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_HKD": {
           "label": "HKD per USD",
-          "n": 11471,
+          "n": 11476,
           "first": "1981-01-02",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_INR": {
           "label": "INR per USD",
-          "n": 13463,
+          "n": 13468,
           "first": "1973-01-02",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_JPY": {
           "label": "JPY per USD",
-          "n": 13965,
+          "n": 13970,
           "first": "1971-01-04",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_KRW": {
           "label": "KRW per USD",
-          "n": 11357,
+          "n": 11362,
           "first": "1981-04-13",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_MXN": {
           "label": "MXN per USD",
-          "n": 8239,
+          "n": 8244,
           "first": "1993-11-08",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_MYR": {
           "label": "MYR per USD",
-          "n": 13949,
+          "n": 13954,
           "first": "1971-01-04",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_NOK": {
           "label": "NOK per USD",
-          "n": 13970,
+          "n": 13975,
           "first": "1971-01-04",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_NZD": {
           "label": "NZD per USD",
-          "n": 13955,
+          "n": 13960,
           "first": "1971-01-04",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_SEK": {
           "label": "SEK per USD",
-          "n": 13970,
+          "n": 13975,
           "first": "1971-01-04",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_SGD": {
           "label": "SGD per USD",
-          "n": 11470,
+          "n": 11475,
           "first": "1981-01-02",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_THB": {
           "label": "THB per USD",
-          "n": 11390,
+          "n": 11395,
           "first": "1981-01-02",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_TWD": {
           "label": "TWD per USD",
-          "n": 10484,
+          "n": 10489,
           "first": "1983-10-03",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "fx_ZAR": {
           "label": "ZAR per USD",
-          "n": 11714,
+          "n": 11719,
           "first": "1980-01-02",
-          "last": "2026-09-18"
+          "last": "2026-09-25"
         },
         "brent_daily": {
           "label": "Brent crude, daily",
@@ -280,24 +280,24 @@
         "TRESEGINM052N",
         "RBINBIS"
       ],
-      "seconds": 42.5
+      "seconds": 43.4
     },
     "india_external": {
       "status": "ok",
       "foreign-trade": {
-        "rows": 430,
+        "rows": 436,
         "first": "1990-04",
-        "last": "2026-01"
+        "last": "2026-07"
       },
       "balance-of-payments-usd": {
-        "rows": 429,
+        "rows": 435,
         "first": "1990-06",
-        "last": "2025-12"
+        "last": "2026-06"
       },
       "foreign-investment-inflows-bulletin": {
-        "rows": 179,
+        "rows": 185,
         "first": "2011-03",
-        "last": "2026-01"
+        "last": "2026-07"
       },
       "files": [
         "data/india/trade_monthly.csv",
@@ -305,7 +305,7 @@
         "data/india/fpi_monthly_rbi.csv"
       ],
       "n": 3,
-      "seconds": 0.4
+      "seconds": 1.8
     },
     "official_rates": {
       "status": "ok",
@@ -316,17 +316,22 @@
       ],
       "n": 3,
       "failed": [],
-      "seconds": 2.5
+      "seconds": 3.1
     }
   },
   "dq": {
     "errors": 0,
-    "warnings": 8,
+    "warnings": 9,
     "entries": [
       {
         "level": "note",
         "source": "india_misc",
-        "msg": "NSE IV: 14 strike-legs captured, 11 with open interest"
+        "msg": "NSE IV: 7 strike-legs captured, 1 with open interest"
+      },
+      {
+        "level": "warn",
+        "source": "india_misc",
+        "msg": "very few strikes carry open interest \u2014 post-Apr-2024 liquidity is thin; treat IV-derived factors with suspicion"
       },
       {
         "level": "note",
@@ -341,12 +346,12 @@
       {
         "level": "note",
         "source": "market",
-        "msg": "FX mirror: 21 currencies; INR 13463 obs to 2026-09-18"
+        "msg": "FX mirror: 21 currencies; INR 13468 obs to 2026-09-25"
       },
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 48 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 49 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -391,7 +396,7 @@
       {
         "level": "note",
         "source": "rbihub",
-        "msg": "usd-sale-purchase: 368 rows, last September 2025"
+        "msg": "usd-sale-purchase: 374 rows, last September 2025"
       },
       {
         "level": "note",
@@ -441,22 +446,22 @@
       {
         "level": "note",
         "source": "india_external",
-        "msg": "monthly merchandise trade: 430 rows, 1990-04 to 2026-01"
+        "msg": "monthly merchandise trade: 436 rows, 1990-04 to 2026-07"
       },
       {
         "level": "note",
         "source": "india_external",
-        "msg": "quarterly balance of payments, US$ mn: 429 rows, 1990-06 to 2025-12"
+        "msg": "quarterly balance of payments, US$ mn: 435 rows, 1990-06 to 2026-06"
       },
       {
         "level": "note",
         "source": "india_external",
-        "msg": "monthly FDI and portfolio flows, US$ mn: 179 rows, 2011-03 to 2026-01"
+        "msg": "monthly FDI and portfolio flows, US$ mn: 185 rows, 2011-03 to 2026-07"
       },
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "ECB reference rates: 7101 days, 1999-01-04 to 2026-09-25, 6 currencies"
+        "msg": "ECB reference rates: 7102 days, 1999-01-04 to 2026-09-28, 6 currencies"
       },
       {
         "level": "note",
@@ -466,12 +471,12 @@
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "treasury 10 Yr: 9190 rows, 1990-01-02 to 2026-09-25, last 5.17"
+        "msg": "treasury 10 Yr: 9191 rows, 1990-01-02 to 2026-09-28, last 5.24"
       },
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "treasury 2 Yr: 9190 rows, 1990-01-02 to 2026-09-25, last 4.81"
+        "msg": "treasury 2 Yr: 9191 rows, 1990-01-02 to 2026-09-28, last 4.92"
       }
     ]
   }
