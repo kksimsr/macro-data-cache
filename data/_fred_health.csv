@@ -1,2 +1,2 @@
 consecutive_failures,note
-53,0 = healthy; >=2 opens the circuit breaker
+54,0 = healthy; >=2 opens the circuit breaker
