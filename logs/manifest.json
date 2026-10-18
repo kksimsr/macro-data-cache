@@ -1,7 +1,7 @@
 {
-  "run_started_utc": "2026-10-17T07:07:02+00:00",
-  "run_finished_utc": "2026-10-17T07:08:38+00:00",
-  "duration_s": 96.0,
+  "run_started_utc": "2026-10-18T07:21:21+00:00",
+  "run_finished_utc": "2026-10-18T07:22:58+00:00",
+  "duration_s": 97.1,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
@@ -12,7 +12,7 @@
       "parsed": 162,
       "backfill_remaining": 0,
       "last": "2026-07",
-      "seconds": 9.4
+      "seconds": 8.8
     },
     "rbi_wss": {
       "status": "ok",
@@ -22,7 +22,7 @@
       "n_weeks": 888,
       "last": "2026-10-09",
       "backfill_remaining": 0,
-      "seconds": 8.0
+      "seconds": 4.9
     },
     "rbihub": {
       "status": "ok",
@@ -54,7 +54,7 @@
           "last": "Sep"
         }
       },
-      "seconds": 1.9
+      "seconds": 1.2
     },
     "nsdl_fpi": {
       "status": "ok",
@@ -64,7 +64,7 @@
       "n": 9,
       "last": "2026-09",
       "backfill_remaining": 19,
-      "seconds": 17.2
+      "seconds": 22.8
     },
     "india_misc": {
       "status": "ok",
@@ -73,7 +73,7 @@
         "raw/wpi/wpi_monthly_index_202610.xlsx.gz",
         "raw/wpi/monthly_index_202606.xls.gz"
       ],
-      "seconds": 11.7
+      "seconds": 12.6
     },
     "market": {
       "status": "ok",
@@ -305,7 +305,7 @@
         "data/india/fpi_monthly_rbi.csv"
       ],
       "n": 3,
-      "seconds": 2.3
+      "seconds": 1.2
     },
     "official_rates": {
       "status": "ok",
@@ -316,7 +316,7 @@
       ],
       "n": 3,
       "failed": [],
-      "seconds": 2.9
+      "seconds": 3.1
     }
   },
   "dq": {
@@ -351,12 +351,12 @@
       {
         "level": "warn",
         "source": "market",
-        "msg": "vix_daily stale: last obs 2026-09-22 is 25d old (limit 10d)"
+        "msg": "vix_daily stale: last obs 2026-09-22 is 26d old (limit 10d)"
       },
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 67 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 68 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -386,7 +386,7 @@
       {
         "level": "note",
         "source": "rbi_wss_reserves",
-        "msg": "888 weeks (units US$ mn, dated by as-on not publication); 1 new; ~0 to backfill"
+        "msg": "888 weeks (units US$ mn, dated by as-on not publication); 0 new; ~0 to backfill"
       },
       {
         "level": "note",
@@ -396,7 +396,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (138d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (139d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
