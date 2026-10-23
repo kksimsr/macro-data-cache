@@ -1,7 +1,7 @@
 {
-  "run_started_utc": "2026-10-22T07:50:30+00:00",
-  "run_finished_utc": "2026-10-22T07:52:15+00:00",
-  "duration_s": 105.2,
+  "run_started_utc": "2026-10-23T07:49:36+00:00",
+  "run_finished_utc": "2026-10-23T07:51:15+00:00",
+  "duration_s": 99.2,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
@@ -12,7 +12,7 @@
       "parsed": 162,
       "backfill_remaining": 0,
       "last": "2026-07",
-      "seconds": 7.9
+      "seconds": 7.5
     },
     "rbi_wss": {
       "status": "ok",
@@ -22,7 +22,7 @@
       "n_weeks": 888,
       "last": "2026-10-09",
       "backfill_remaining": 0,
-      "seconds": 5.2
+      "seconds": 5.3
     },
     "rbihub": {
       "status": "ok",
@@ -54,7 +54,7 @@
           "last": "Sep"
         }
       },
-      "seconds": 0.3
+      "seconds": 2.0
     },
     "nsdl_fpi": {
       "status": "ok",
@@ -64,7 +64,7 @@
       "n": 9,
       "last": "2026-09",
       "backfill_remaining": 19,
-      "seconds": 36.2
+      "seconds": 22.1
     },
     "india_misc": {
       "status": "ok",
@@ -73,7 +73,7 @@
         "raw/wpi/wpi_monthly_index_202610.xlsx.gz",
         "raw/wpi/monthly_index_202606.xls.gz"
       ],
-      "seconds": 9.5
+      "seconds": 10.8
     },
     "market": {
       "status": "ok",
@@ -305,7 +305,7 @@
         "data/india/fpi_monthly_rbi.csv"
       ],
       "n": 3,
-      "seconds": 0.2
+      "seconds": 1.9
     },
     "official_rates": {
       "status": "ok",
@@ -316,7 +316,7 @@
       ],
       "n": 3,
       "failed": [],
-      "seconds": 3.0
+      "seconds": 6.5
     }
   },
   "dq": {
@@ -326,7 +326,7 @@
       {
         "level": "note",
         "source": "india_misc",
-        "msg": "NSE IV: 8 strike-legs captured, 8 with open interest"
+        "msg": "NSE IV: 9 strike-legs captured, 8 with open interest"
       },
       {
         "level": "warn",
@@ -351,12 +351,12 @@
       {
         "level": "warn",
         "source": "market",
-        "msg": "vix_daily stale: last obs 2026-09-22 is 30d old (limit 10d)"
+        "msg": "vix_daily stale: last obs 2026-09-22 is 31d old (limit 10d)"
       },
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 72 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 73 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -396,7 +396,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (143d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (144d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -471,7 +471,7 @@
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "ECB reference rates: 7119 days, 1999-01-04 to 2026-10-21, 6 currencies"
+        "msg": "ECB reference rates: 7120 days, 1999-01-04 to 2026-10-22, 6 currencies"
       },
       {
         "level": "note",
@@ -481,12 +481,12 @@
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "treasury 10 Yr: 9207 rows, 1990-01-02 to 2026-10-21, last 5.13"
+        "msg": "treasury 10 Yr: 9208 rows, 1990-01-02 to 2026-10-22, last 4.96"
       },
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "treasury 2 Yr: 9207 rows, 1990-01-02 to 2026-10-21, last 4.81"
+        "msg": "treasury 2 Yr: 9208 rows, 1990-01-02 to 2026-10-22, last 4.65"
       }
     ]
   }
