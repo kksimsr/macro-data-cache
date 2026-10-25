@@ -1,26 +1,26 @@
 # Data manifest
 
-Last run: **2026-10-24T07:32:49+00:00** · 96.3s · 0 errors, 11 warnings
+Last run: **2026-10-25T07:46:09+00:00** · 97.8s · 0 errors, 11 warnings
 
 | source | status | detail |
 |---|---|---|
-| `rbi_forward_book` | ok | n_months=166, parsed=162, last=2026-07, backfill_remaining=0, seconds=7.5 |
-| `rbi_wss` | ok | n_weeks=889, last=2026-10-16, backfill_remaining=0, seconds=6.1 |
-| `rbihub` | ok | 4 series, seconds=1.0 |
-| `nsdl_fpi` | ok | n=9, last=2026-09, backfill_remaining=19, seconds=21.9 |
-| `india_misc` | ok | seconds=12.1 |
-| `market` | ok | 27 series, seconds=43.3 |
-| `india_external` | ok | n=3, seconds=0.5 |
-| `official_rates` | ok | n=3, seconds=3.8 |
+| `rbi_forward_book` | ok | n_months=166, parsed=162, last=2026-07, backfill_remaining=0, seconds=7.4 |
+| `rbi_wss` | ok | n_weeks=889, last=2026-10-16, backfill_remaining=0, seconds=4.6 |
+| `rbihub` | ok | 4 series, seconds=1.2 |
+| `nsdl_fpi` | ok | n=9, last=2026-09, backfill_remaining=19, seconds=26.7 |
+| `india_misc` | ok | seconds=11.1 |
+| `market` | ok | 27 series, seconds=42.7 |
+| `india_external` | ok | n=3, seconds=1.4 |
+| `official_rates` | ok | n=3, seconds=2.7 |
 
 ## Warnings
 
 - *india_misc* — very few strikes carry open interest — post-Apr-2024 liquidity is thin; treat IV-derived factors with suspicion
-- *market* — vix_daily stale: last obs 2026-09-22 is 32d old (limit 10d)
+- *market* — vix_daily stale: last obs 2026-09-22 is 33d old (limit 10d)
 - *market* — DGS10 (US 10y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)
 - *market* — coverage gaps (8): DGS10, DGS2, DFII10, DFF, DTWEXBGS, BAMLEMCBPIOAS, TRESEGINM052N, RBINBIS — FRED-only series, no mirror exists; retried next run
-- *rbi_forward_book* — 141 months given up on after 3 confirmed-absent probes: 2001-06, 2001-07, 2001-08, 2001-09, 2001-10, 2001-11, 2001-12, 2002-01...
-- *rbihub* — sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (145d) — mirror lag, patch the tail from another route
+- *rbi_forward_book* — 142 months given up on after 3 confirmed-absent probes: 2001-06, 2001-07, 2001-08, 2001-09, 2001-10, 2001-11, 2001-12, 2002-01...
+- *rbihub* — sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (146d) — mirror lag, patch the tail from another route
 - *nsdl_fpi* — 2021: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
 - *nsdl_fpi* — 2022: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
 - *nsdl_fpi* — 2023: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
