@@ -1,7 +1,7 @@
 {
-  "run_started_utc": "2026-10-31T08:40:25+00:00",
-  "run_finished_utc": "2026-10-31T08:42:01+00:00",
-  "duration_s": 96.1,
+  "run_started_utc": "2026-11-01T09:30:35+00:00",
+  "run_finished_utc": "2026-11-01T09:32:10+00:00",
+  "duration_s": 94.5,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
@@ -12,7 +12,7 @@
       "parsed": 162,
       "backfill_remaining": 0,
       "last": "2026-07",
-      "seconds": 8.1
+      "seconds": 7.7
     },
     "rbi_wss": {
       "status": "ok",
@@ -22,7 +22,7 @@
       "n_weeks": 890,
       "last": "2026-10-23",
       "backfill_remaining": 0,
-      "seconds": 5.9
+      "seconds": 4.9
     },
     "rbihub": {
       "status": "ok",
@@ -54,24 +54,24 @@
           "last": "Sep"
         }
       },
-      "seconds": 1.7
+      "seconds": 2.0
     },
     "nsdl_fpi": {
       "status": "ok",
       "files": [
         "data/india/fpi_flows_monthly.csv"
       ],
-      "n": 9,
-      "last": "2026-09",
+      "n": 10,
+      "last": "2026-10",
       "backfill_remaining": 19,
-      "seconds": 25.0
+      "seconds": 24.6
     },
     "india_misc": {
       "status": "ok",
       "files": [
         "data/india/usdinr_option_iv_log.csv"
       ],
-      "seconds": 7.8
+      "seconds": 8.0
     },
     "market": {
       "status": "ok",
@@ -257,15 +257,15 @@
         },
         "us_cpi_monthly": {
           "label": "US CPI, monthly",
-          "n": 1363,
+          "n": 1364,
           "first": "1913-01-01",
-          "last": "2026-08-01"
+          "last": "2026-09-01"
         },
         "us_10y_monthly": {
           "label": "US 10y yield, monthly",
-          "n": 881,
+          "n": 882,
           "first": "1953-04-01",
-          "last": "2026-08-01"
+          "last": "2026-09-01"
         }
       },
       "gaps": [
@@ -278,7 +278,7 @@
         "TRESEGINM052N",
         "RBINBIS"
       ],
-      "seconds": 42.8
+      "seconds": 42.6
     },
     "india_external": {
       "status": "ok",
@@ -303,7 +303,7 @@
         "data/india/fpi_monthly_rbi.csv"
       ],
       "n": 3,
-      "seconds": 1.6
+      "seconds": 1.7
     },
     "official_rates": {
       "status": "ok",
@@ -314,7 +314,7 @@
       ],
       "n": 3,
       "failed": [],
-      "seconds": 3.3
+      "seconds": 3.0
     }
   },
   "dq": {
@@ -349,12 +349,12 @@
       {
         "level": "warn",
         "source": "market",
-        "msg": "vix_daily stale: last obs 2026-09-22 is 39d old (limit 10d)"
+        "msg": "vix_daily stale: last obs 2026-09-22 is 40d old (limit 10d)"
       },
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 81 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 82 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -379,17 +379,17 @@
       {
         "level": "note",
         "source": "rbi_forward_book",
-        "msg": "166 months on file, 3 fetched, 3 missed, 162 parsed, ~0 left to backfill"
+        "msg": "166 months on file, 2 fetched, 4 missed, 162 parsed, ~0 left to backfill"
       },
       {
         "level": "note",
         "source": "rbi_wss_reserves",
-        "msg": "890 weeks (units US$ mn, dated by as-on not publication); 1 new; ~0 to backfill"
+        "msg": "890 weeks (units US$ mn, dated by as-on not publication); 0 new; ~0 to backfill"
       },
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-07-31 (122d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-indices-of-reer-neer-monthly stale: last obs 2026-07-31 (123d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -399,7 +399,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (152d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (153d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -444,12 +444,12 @@
       {
         "level": "note",
         "source": "nsdl_fpi",
-        "msg": "column mapping reconciles in 9/9 months"
+        "msg": "column mapping reconciles in 10/10 months"
       },
       {
         "level": "note",
         "source": "nsdl_fpi",
-        "msg": "9 months on file (units: INR crore); ~19 years still to backfill"
+        "msg": "10 months on file (units: INR crore); ~19 years still to backfill"
       },
       {
         "level": "note",
