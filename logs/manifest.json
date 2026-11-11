@@ -1,7 +1,7 @@
 {
-  "run_started_utc": "2026-11-10T10:13:52+00:00",
-  "run_finished_utc": "2026-11-10T10:16:26+00:00",
-  "duration_s": 154.4,
+  "run_started_utc": "2026-11-11T09:43:36+00:00",
+  "run_finished_utc": "2026-11-11T09:45:22+00:00",
+  "duration_s": 107.0,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
@@ -12,7 +12,7 @@
       "parsed": 162,
       "backfill_remaining": 0,
       "last": "2026-07",
-      "seconds": 10.3
+      "seconds": 10.8
     },
     "rbi_wss": {
       "status": "ok",
@@ -22,7 +22,7 @@
       "n_weeks": 891,
       "last": "2026-10-30",
       "backfill_remaining": 0,
-      "seconds": 5.0
+      "seconds": 13.2
     },
     "rbihub": {
       "status": "ok",
@@ -54,7 +54,7 @@
           "last": "Sep"
         }
       },
-      "seconds": 0.2
+      "seconds": 1.6
     },
     "nsdl_fpi": {
       "status": "ok",
@@ -64,14 +64,14 @@
       "n": 10,
       "last": "2026-10",
       "backfill_remaining": 19,
-      "seconds": 23.3
+      "seconds": 25.6
     },
     "india_misc": {
       "status": "ok",
       "files": [
         "data/india/usdinr_option_iv_log.csv"
       ],
-      "seconds": 7.1
+      "seconds": 7.9
     },
     "market": {
       "status": "ok",
@@ -278,7 +278,7 @@
         "TRESEGINM052N",
         "RBINBIS"
       ],
-      "seconds": 44.1
+      "seconds": 42.9
     },
     "india_external": {
       "status": "ok",
@@ -303,29 +303,28 @@
         "data/india/fpi_monthly_rbi.csv"
       ],
       "n": 3,
-      "seconds": 0.2
+      "seconds": 1.9
     },
     "official_rates": {
       "status": "ok",
       "files": [
+        "data/market/ecb_eur_reference_rates.csv",
         "data/market/us_10y_daily.csv",
         "data/market/us_2y_daily.csv"
       ],
-      "n": 2,
-      "failed": [
-        "ecb"
-      ],
-      "seconds": 64.2
+      "n": 3,
+      "failed": [],
+      "seconds": 3.0
     }
   },
   "dq": {
     "errors": 0,
-    "warnings": 14,
+    "warnings": 13,
     "entries": [
       {
         "level": "note",
         "source": "india_misc",
-        "msg": "NSE IV: 1606 strike-legs captured, 4 with open interest"
+        "msg": "NSE IV: 10 strike-legs captured, 4 with open interest"
       },
       {
         "level": "warn",
@@ -350,12 +349,12 @@
       {
         "level": "warn",
         "source": "market",
-        "msg": "vix_daily stale: last obs 2026-09-22 is 49d old (limit 10d)"
+        "msg": "vix_daily stale: last obs 2026-09-22 is 50d old (limit 10d)"
       },
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 90 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 91 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -395,7 +394,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (162d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (163d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -468,9 +467,9 @@
         "msg": "monthly FDI and portfolio flows, US$ mn: 186 rows, 2011-03 to 2026-08"
       },
       {
-        "level": "warn",
+        "level": "note",
         "source": "official_rates",
-        "msg": "ECB unavailable: HTTP 504 for https://data-api.ecb.europa.eu/service/data/EXR/D.USD+JPY+GBP+CAD+SEK+CHF.EUR.SP00.A?format=csvdata&detail=dataonly"
+        "msg": "ECB reference rates: 7133 days, 1999-01-04 to 2026-11-10, 6 currencies"
       },
       {
         "level": "note",
@@ -480,12 +479,12 @@
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "treasury 10 Yr: 9220 rows, 1990-01-02 to 2026-11-09, last 4.88"
+        "msg": "treasury 10 Yr: 9221 rows, 1990-01-02 to 2026-11-10, last 4.98"
       },
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "treasury 2 Yr: 9220 rows, 1990-01-02 to 2026-11-09, last 4.56"
+        "msg": "treasury 2 Yr: 9221 rows, 1990-01-02 to 2026-11-10, last 4.73"
       }
     ]
   }
