@@ -1,7 +1,7 @@
 {
-  "run_started_utc": "2026-11-11T09:43:36+00:00",
-  "run_finished_utc": "2026-11-11T09:45:22+00:00",
-  "duration_s": 107.0,
+  "run_started_utc": "2026-11-12T10:04:13+00:00",
+  "run_finished_utc": "2026-11-12T10:06:01+00:00",
+  "duration_s": 108.4,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
@@ -12,7 +12,7 @@
       "parsed": 162,
       "backfill_remaining": 0,
       "last": "2026-07",
-      "seconds": 10.8
+      "seconds": 8.6
     },
     "rbi_wss": {
       "status": "ok",
@@ -22,7 +22,7 @@
       "n_weeks": 891,
       "last": "2026-10-30",
       "backfill_remaining": 0,
-      "seconds": 13.2
+      "seconds": 5.7
     },
     "rbihub": {
       "status": "ok",
@@ -54,7 +54,7 @@
           "last": "Sep"
         }
       },
-      "seconds": 1.6
+      "seconds": 2.0
     },
     "nsdl_fpi": {
       "status": "ok",
@@ -64,14 +64,14 @@
       "n": 10,
       "last": "2026-10",
       "backfill_remaining": 19,
-      "seconds": 25.6
+      "seconds": 23.2
     },
     "india_misc": {
       "status": "ok",
       "files": [
         "data/india/usdinr_option_iv_log.csv"
       ],
-      "seconds": 7.9
+      "seconds": 12.7
     },
     "market": {
       "status": "ok",
@@ -278,7 +278,7 @@
         "TRESEGINM052N",
         "RBINBIS"
       ],
-      "seconds": 42.9
+      "seconds": 43.2
     },
     "india_external": {
       "status": "ok",
@@ -314,7 +314,7 @@
       ],
       "n": 3,
       "failed": [],
-      "seconds": 3.0
+      "seconds": 11.0
     }
   },
   "dq": {
@@ -324,7 +324,7 @@
       {
         "level": "note",
         "source": "india_misc",
-        "msg": "NSE IV: 10 strike-legs captured, 4 with open interest"
+        "msg": "NSE IV: 9 strike-legs captured, 4 with open interest"
       },
       {
         "level": "warn",
@@ -349,12 +349,12 @@
       {
         "level": "warn",
         "source": "market",
-        "msg": "vix_daily stale: last obs 2026-09-22 is 50d old (limit 10d)"
+        "msg": "vix_daily stale: last obs 2026-09-22 is 51d old (limit 10d)"
       },
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 91 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 92 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -394,7 +394,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (163d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (164d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
@@ -469,7 +469,7 @@
       {
         "level": "note",
         "source": "official_rates",
-        "msg": "ECB reference rates: 7133 days, 1999-01-04 to 2026-11-10, 6 currencies"
+        "msg": "ECB reference rates: 7134 days, 1999-01-04 to 2026-11-11, 6 currencies"
       },
       {
         "level": "note",
