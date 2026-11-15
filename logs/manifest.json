@@ -1,7 +1,7 @@
 {
-  "run_started_utc": "2026-11-14T09:14:47+00:00",
-  "run_finished_utc": "2026-11-14T09:16:14+00:00",
-  "duration_s": 86.4,
+  "run_started_utc": "2026-11-15T09:44:50+00:00",
+  "run_finished_utc": "2026-11-15T09:46:18+00:00",
+  "duration_s": 88.1,
   "sources": {
     "rbi_forward_book": {
       "status": "ok",
@@ -12,7 +12,7 @@
       "parsed": 162,
       "backfill_remaining": 0,
       "last": "2026-07",
-      "seconds": 7.7
+      "seconds": 7.1
     },
     "rbi_wss": {
       "status": "ok",
@@ -22,7 +22,7 @@
       "n_weeks": 892,
       "last": "2026-11-06",
       "backfill_remaining": 0,
-      "seconds": 5.9
+      "seconds": 4.2
     },
     "rbihub": {
       "status": "ok",
@@ -54,7 +54,7 @@
           "last": "Sep"
         }
       },
-      "seconds": 1.1
+      "seconds": 0.5
     },
     "nsdl_fpi": {
       "status": "ok",
@@ -64,14 +64,14 @@
       "n": 10,
       "last": "2026-10",
       "backfill_remaining": 19,
-      "seconds": 14.4
+      "seconds": 18.0
     },
     "india_misc": {
       "status": "ok",
       "files": [
         "data/india/usdinr_option_iv_log.csv"
       ],
-      "seconds": 6.8
+      "seconds": 12.2
     },
     "market": {
       "status": "ok",
@@ -278,7 +278,7 @@
         "TRESEGINM052N",
         "RBINBIS"
       ],
-      "seconds": 41.8
+      "seconds": 42.3
     },
     "india_external": {
       "status": "ok",
@@ -303,7 +303,7 @@
         "data/india/fpi_monthly_rbi.csv"
       ],
       "n": 3,
-      "seconds": 1.1
+      "seconds": 0.7
     },
     "official_rates": {
       "status": "ok",
@@ -314,7 +314,7 @@
       ],
       "n": 3,
       "failed": [],
-      "seconds": 7.5
+      "seconds": 3.2
     }
   },
   "dq": {
@@ -349,12 +349,12 @@
       {
         "level": "warn",
         "source": "market",
-        "msg": "vix_daily stale: last obs 2026-09-22 is 53d old (limit 10d)"
+        "msg": "vix_daily stale: last obs 2026-09-22 is 54d old (limit 10d)"
       },
       {
         "level": "note",
         "source": "market",
-        "msg": "FRED circuit breaker open after 94 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
+        "msg": "FRED circuit breaker open after 95 failed runs \u2014 probing DGS10 only; full set resumes when it responds"
       },
       {
         "level": "warn",
@@ -384,7 +384,7 @@
       {
         "level": "note",
         "source": "rbi_wss_reserves",
-        "msg": "892 weeks (units US$ mn, dated by as-on not publication); 1 new; ~0 to backfill"
+        "msg": "892 weeks (units US$ mn, dated by as-on not publication); 0 new; ~0 to backfill"
       },
       {
         "level": "note",
@@ -394,7 +394,7 @@
       {
         "level": "warn",
         "source": "rbihub",
-        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (166d) \u2014 mirror lag, patch the tail from another route"
+        "msg": "sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (167d) \u2014 mirror lag, patch the tail from another route"
       },
       {
         "level": "note",
