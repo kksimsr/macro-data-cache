@@ -1,28 +1,28 @@
 # Data manifest
 
-Last run: **2026-11-23T11:03:17+00:00** · 103.9s · 0 errors, 13 warnings
+Last run: **2026-11-24T12:49:39+00:00** · 86.5s · 0 errors, 13 warnings
 
 | source | status | detail |
 |---|---|---|
-| `rbi_forward_book` | ok | n_months=166, parsed=162, last=2026-07, backfill_remaining=0, seconds=10.2 |
-| `rbi_wss` | ok | n_weeks=893, last=2026-11-13, backfill_remaining=0, seconds=5.3 |
-| `rbihub` | ok | 4 series, seconds=1.8 |
-| `nsdl_fpi` | ok | n=10, last=2026-10, backfill_remaining=19, seconds=28.3 |
-| `india_misc` | ok | seconds=8.1 |
-| `market` | ok | 27 series, seconds=42.6 |
-| `india_external` | ok | n=3, seconds=2.0 |
-| `official_rates` | ok | n=3, seconds=5.7 |
+| `rbi_forward_book` | ok | n_months=166, parsed=162, last=2026-07, backfill_remaining=0, seconds=7.7 |
+| `rbi_wss` | ok | n_weeks=893, last=2026-11-13, backfill_remaining=0, seconds=7.5 |
+| `rbihub` | ok | 4 series, seconds=0.2 |
+| `nsdl_fpi` | ok | n=10, last=2026-10, backfill_remaining=19, seconds=15.5 |
+| `india_misc` | ok | seconds=7.0 |
+| `market` | ok | 27 series, seconds=43.5 |
+| `india_external` | ok | n=3, seconds=0.2 |
+| `official_rates` | ok | n=3, seconds=5.0 |
 
 ## Warnings
 
 - *india_misc* — very few strikes carry open interest — post-Apr-2024 liquidity is thin; treat IV-derived factors with suspicion
 - *india_misc* — WPI 2022-23 base file not found for any recent month (site is known to be flaky — retry next run)
 - *india_misc* — WPI 2011-12 base (needed for the pre-Apr-2023 splice) not found in the last 5 months — series may be discontinued
-- *market* — vix_daily stale: last obs 2026-09-22 is 62d old (limit 10d)
+- *market* — vix_daily stale: last obs 2026-09-22 is 63d old (limit 10d)
 - *market* — DGS10 (US 10y CMT, daily) unavailable from FRED: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20) | HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)
 - *market* — coverage gaps (8): DGS10, DGS2, DFII10, DFF, DTWEXBGS, BAMLEMCBPIOAS, TRESEGINM052N, RBINBIS — FRED-only series, no mirror exists; retried next run
 - *rbi_forward_book* — 142 months given up on after 3 confirmed-absent probes: 2001-06, 2001-07, 2001-08, 2001-09, 2001-10, 2001-11, 2001-12, 2002-01...
-- *rbihub* — sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (175d) — mirror lag, patch the tail from another route
+- *rbihub* — sdmx-forward-premia-inter-bank stale: last obs 2026-06-30 (176d) — mirror lag, patch the tail from another route
 - *nsdl_fpi* — 2021: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
 - *nsdl_fpi* — 2022: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
 - *nsdl_fpi* — 2023: postback refused (ConnectionError) — historical backfill needs a browser; the current year is unaffected
@@ -39,27 +39,27 @@ FRED-only series unavailable this run (no mirror exists); retried next run:
 
 | id | label | n | first | last |
 |---|---|---|---|---|
-| `fx_AUD` | AUD per USD | 14002 | 1971-01-04 | 2026-11-13 |
-| `fx_BRL` | BRL per USD | 7992 | 1995-01-02 | 2026-11-13 |
-| `fx_CAD` | CAD per USD | 14015 | 1971-01-04 | 2026-11-13 |
-| `fx_CHF` | CHF per USD | 14009 | 1971-01-04 | 2026-11-13 |
-| `fx_CNY` | CNY per USD | 11449 | 1981-01-02 | 2026-11-13 |
-| `fx_DKK` | DKK per USD | 14008 | 1971-01-04 | 2026-11-13 |
-| `fx_EUR` | EUR per USD | 6988 | 1999-01-04 | 2026-11-13 |
-| `fx_GBP` | GBP per USD | 14009 | 1971-01-04 | 2026-11-13 |
-| `fx_HKD` | HKD per USD | 11509 | 1981-01-02 | 2026-11-13 |
-| `fx_INR` | INR per USD | 13501 | 1973-01-02 | 2026-11-13 |
-| `fx_JPY` | JPY per USD | 14003 | 1971-01-04 | 2026-11-13 |
-| `fx_KRW` | KRW per USD | 11395 | 1981-04-13 | 2026-11-13 |
-| `fx_MXN` | MXN per USD | 8277 | 1993-11-08 | 2026-11-13 |
-| `fx_MYR` | MYR per USD | 13987 | 1971-01-04 | 2026-11-13 |
-| `fx_NOK` | NOK per USD | 14008 | 1971-01-04 | 2026-11-13 |
-| `fx_NZD` | NZD per USD | 13993 | 1971-01-04 | 2026-11-13 |
-| `fx_SEK` | SEK per USD | 14008 | 1971-01-04 | 2026-11-13 |
-| `fx_SGD` | SGD per USD | 11508 | 1981-01-02 | 2026-11-13 |
-| `fx_THB` | THB per USD | 11428 | 1981-01-02 | 2026-11-13 |
-| `fx_TWD` | TWD per USD | 10522 | 1983-10-03 | 2026-11-13 |
-| `fx_ZAR` | ZAR per USD | 11752 | 1980-01-02 | 2026-11-13 |
+| `fx_AUD` | AUD per USD | 14007 | 1971-01-04 | 2026-11-20 |
+| `fx_BRL` | BRL per USD | 7997 | 1995-01-02 | 2026-11-20 |
+| `fx_CAD` | CAD per USD | 14020 | 1971-01-04 | 2026-11-20 |
+| `fx_CHF` | CHF per USD | 14014 | 1971-01-04 | 2026-11-20 |
+| `fx_CNY` | CNY per USD | 11454 | 1981-01-02 | 2026-11-20 |
+| `fx_DKK` | DKK per USD | 14013 | 1971-01-04 | 2026-11-20 |
+| `fx_EUR` | EUR per USD | 6993 | 1999-01-04 | 2026-11-20 |
+| `fx_GBP` | GBP per USD | 14014 | 1971-01-04 | 2026-11-20 |
+| `fx_HKD` | HKD per USD | 11514 | 1981-01-02 | 2026-11-20 |
+| `fx_INR` | INR per USD | 13506 | 1973-01-02 | 2026-11-20 |
+| `fx_JPY` | JPY per USD | 14008 | 1971-01-04 | 2026-11-20 |
+| `fx_KRW` | KRW per USD | 11400 | 1981-04-13 | 2026-11-20 |
+| `fx_MXN` | MXN per USD | 8282 | 1993-11-08 | 2026-11-20 |
+| `fx_MYR` | MYR per USD | 13992 | 1971-01-04 | 2026-11-20 |
+| `fx_NOK` | NOK per USD | 14013 | 1971-01-04 | 2026-11-20 |
+| `fx_NZD` | NZD per USD | 13998 | 1971-01-04 | 2026-11-20 |
+| `fx_SEK` | SEK per USD | 14013 | 1971-01-04 | 2026-11-20 |
+| `fx_SGD` | SGD per USD | 11513 | 1981-01-02 | 2026-11-20 |
+| `fx_THB` | THB per USD | 11433 | 1981-01-02 | 2026-11-20 |
+| `fx_TWD` | TWD per USD | 10527 | 1983-10-03 | 2026-11-20 |
+| `fx_ZAR` | ZAR per USD | 11757 | 1980-01-02 | 2026-11-20 |
 | `brent_daily` | Brent crude, daily | 9132 | 1987-05-20 | 2026-11-17 |
 | `wti_daily` | WTI crude, daily | 9547 | 1986-01-02 | 2026-11-17 |
 | `vix_daily` | VIX close, daily | 9278 | 1990-01-02 | 2026-09-22 |
